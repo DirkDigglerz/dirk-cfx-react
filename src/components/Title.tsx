@@ -1,0 +1,97 @@
+import { colorWithAlpha } from "@/utils";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { Flex, Text, useMantineTheme } from "@mantine/core";
+import { BorderedIcon } from "./BorderedIcon";
+
+
+export type ButtonProps = {
+  icon: string;
+  onClick?: () => void;
+};
+
+export type TitleProps = {
+  title: string
+  description: string;
+  icon: string;
+  iconColor?: string;
+  mt?: string;
+  bg?: string;
+  w?: string;
+  removeBorder?: boolean;
+  borderColor?: string;
+  p?: string;
+  rightSection?: React.ReactNode;
+};
+
+
+export function Title(props: TitleProps) {
+  
+  const theme = useMantineTheme();
+  return (
+    <Flex
+      mt={props.mt}
+      direction='column'
+      // align='center'
+      bg={props.bg || 'transparent'}
+      gap='xs'
+      // flex={1}
+      // w='90%'
+
+      w={props.w || '100%'}
+      
+      // pb={props.removeBorder ? '0' : 'xs'}
+      // pl={!props.removeBorder ? 'xs' : '0'}
+      p={props.p || '0'}
+      style={{
+        userSelect: 'none',
+        borderBottom: props.removeBorder ? 'none' : `0.2vh solid ${props.borderColor || colorWithAlpha(theme.colors[theme.primaryColor][9], 0.5)}`
+      }}
+    >
+      <Flex
+   
+        align='center'
+        justify={'center'}
+      >
+
+        <Flex
+          align='center'
+          gap='sm'
+          pr='xs'      
+          >
+          <BorderedIcon
+            icon={props.icon as IconName}
+            fontSize={theme.fontSizes.md}
+            color={props.iconColor}
+          />
+          <Flex
+            direction='column'
+            gap='0.25vh'
+            // w='30%'
+          >
+            <Text p='0' size='sm' style={{
+              lineHeight: theme.fontSizes.md,
+              fontFamily: 'Akrobat Bold',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+            }}>{props.title}</Text>
+            <Text 
+              size='xs'
+              c='grey'
+              style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}
+            >{props.description}</Text>
+          </Flex>
+
+
+        </Flex>
+
+        <Flex
+          ml='auto'
+          align='center'
+          gap='xs'
+        >
+          {props.rightSection}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+}

@@ -1,6 +1,6 @@
 {
   "name": "dirk-cfx-react",
-  "version": "1.0.8",
+  "version": "1.0.34",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -44,6 +44,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "watch": "tsup --watch",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
@@ -64,7 +65,8 @@
     "react-dom": "^19.2.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "lucide-react": "^0.547.0"
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -77,8 +79,17 @@
     "framer-motion": "^12.23.24",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "lucide-react": "^0.547.0"
   },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.woff",
+    "**/*.woff2",
+    "**/*.ttf",
+    "**/*.otf"
+  ],
   "typesVersions": {
     "*": {
       "components": [

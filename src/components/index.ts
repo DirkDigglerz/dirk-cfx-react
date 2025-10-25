@@ -1,7 +1,6 @@
 export * from "./BorderedIcon";
 export * from "./Counter";
 export * from "./FloatingParticles";
-export * from "./Icon";
 export * from "./InfoBox";
 export * from "./InputContainer";
 export * from "./Motion";

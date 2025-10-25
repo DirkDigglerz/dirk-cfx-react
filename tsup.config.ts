@@ -9,9 +9,9 @@ export default defineConfig({
   entry: {
     index: "src/index.ts",
     "components/index": "src/components/index.ts",
-    "hooks/index": "src/hooks/index.ts",
+    "hooks/index": "src/hooks/index.tsx",
     "utils/index": "src/utils/index.ts",
-    "providers/index": "src/providers/index.ts"
+    "providers/index": "src/providers/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,
@@ -26,11 +26,14 @@ export default defineConfig({
     "@mantine/core",
     "@mantine/hooks",
     "@mantine/notifications",
-    /\.css$/
+    /\.css$/,
   ],
   loader: {
+    // Styles
     ".css": "copy",
     ".scss": "copy",
+
+    // Media assets
     ".mp3": "copy",
     ".wav": "copy",
     ".png": "copy",
@@ -38,21 +41,25 @@ export default defineConfig({
     ".jpeg": "copy",
     ".svg": "copy",
     ".gif": "copy",
-    ".woff": "copy",
-    ".woff2": "copy",
-    ".ttf": "copy",
-    ".otf": "copy"
+
+    // Fonts — use file so bundlers emit proper URLs
+    ".woff": "file",
+    ".woff2": "file",
+    ".ttf": "file",
+    ".otf": "file",
   },
+
   esbuildOptions(options) {
     options.alias = {
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(__dirname, "src").replace(/\\/g, "/"),
     };
   },
+
   async onSuccess() {
     const foldersToCopy = [
-      "src/styles",
-      "src/assets",
-      "src/fonts" // 👈 NEW catch-all for standalone fonts folder
+      "src/styles", // CSS & global styles
+      "src/assets", // misc static
+      "src/fonts",  // ✅ fonts folder
     ];
 
     for (const folder of foldersToCopy) {
@@ -64,5 +71,7 @@ export default defineConfig({
         console.log(`✅ Copied ${folder} → ${dest}`);
       }
     }
-  }
+
+    console.log("🎉 Build complete: styles, assets, and fonts copied successfully!");
+  },
 });

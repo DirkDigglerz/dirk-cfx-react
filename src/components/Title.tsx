@@ -2,6 +2,7 @@ import { colorWithAlpha } from "@/utils";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
 import { BorderedIcon } from "./BorderedIcon";
+import { useSettings } from "..";
 
 
 export type ButtonProps = {
@@ -25,7 +26,7 @@ export type TitleProps = {
 
 
 export function Title(props: TitleProps) {
-  
+  const game = useSettings((state) => state.game);  
   const theme = useMantineTheme();
   return (
     <Flex
@@ -70,7 +71,7 @@ export function Title(props: TitleProps) {
           >
             <Text p='0' size='sm' style={{
               lineHeight: theme.fontSizes.md,
-              fontFamily: 'Akrobat Bold',
+              fontFamily: game == 'fivem' ? 'Akrobat Bold' : 'Red Dead',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
             }}>{props.title}</Text>

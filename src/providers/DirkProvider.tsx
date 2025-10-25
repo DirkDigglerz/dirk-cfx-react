@@ -1,17 +1,19 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
-import './styles/niceFont.css';
+import './styles/fonts.css';
 import './styles/scrollBar.css';
+import './styles/tornEdge.css';
 
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
-import { BackgroundImage, MantineProvider } from '@mantine/core';
+import { BackgroundImage, MantineColorShade, MantineProvider, MantineThemeOverride } from '@mantine/core';
 import { isEnvBrowser } from '@/utils';
 import { create } from 'zustand';
 import theme from '@/theme';
+import { useEffect, useMemo } from 'react';
 library.add(fas, far, fab);
 
 export type DirkProviderProps = {
@@ -31,39 +33,36 @@ export const useSettings = create<{
   customTheme: {},
 }));
 
+
+
 export function DirkProvider(props: DirkProviderProps) {
   const primaryColor = useSettings((data) => data.primaryColor);
   const primaryShade = useSettings((data) => data.primaryShade);
   const customTheme = useSettings((data) => data.customTheme);
-  
-  // Ensure the theme is updated when the settings change
+  const game = useSettings((data) => data.game);
+  // Memoize the merged theme to avoid unnecessary recalculations
+  const mergedTheme = useMemo<MantineThemeOverride>(() => ({
+    ...theme,
+    primaryColor: primaryColor,
+    primaryShade: primaryShade as MantineColorShade,
+    colors: {
+      ...theme.colors,
+      ...customTheme, // Custom theme colors will override/extend base colors
+    },
+  }), [primaryColor, primaryShade, customTheme]);
 
-  // useEffect(() => {
-  //   const updatedTheme = {
-  //     ...theme, // Start with the existing theme object
-  //     colors: {
-  //       ...theme.colors, // Copy the existing colors
-  //       custom: customTheme
-  //     },
-  //   };
-    
-  //   setCurTheme(updatedTheme);
-  //   // set primary color
-  //   setCurTheme({
-  //     ...updatedTheme,
-  //     primaryColor: primaryColor,
-  //     primaryShade: primaryShade,
-  //   });
-
-  // }, [primaryColor, primaryShade, customTheme]);
-
-  // useEffect(() => {
-  //   // fetchSettings();
-  //   runInitialFetches();
-  // }, []);
+  useEffect(() => {
+    document.fonts.ready.then(() => {
+ document.body.style.fontFamily = 
+      game === 'rdr3' ? '"Red Dead", sans-serif' :
+      game === 'fivem' ? '"Akrobat Regular", sans-serif' :
+      'sans-serif';
+    console.log(`Game set to ${game}, applied corresponding font family.: ${document.body.style.fontFamily}`);
+    });
+  }, [game]);
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme='dark'>
+    <MantineProvider theme={mergedTheme} defaultColorScheme='dark'>
       <Wrapper>
         {props.children}
       </Wrapper>

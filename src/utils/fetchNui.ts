@@ -24,9 +24,13 @@ export async function fetchNui<T = unknown>(
     },
     body: JSON.stringify(data),
   };
-  console.log('Mock Data:', mockData);
-  console.log('Is Env Browser:', isEnvBrowser());
   if (isEnvBrowser() && mockData !== undefined) return mockData;
+  if (isEnvBrowser()) {
+    console.warn(
+      `[fetchNui] Called fetchNui for event "${eventName}" in browser environment without mockData. Returning empty object.`,
+    );
+    return {} as T;
+  }
 
   const resourceName = (window as any).GetParentResourceName
     ? (window as any).GetParentResourceName()

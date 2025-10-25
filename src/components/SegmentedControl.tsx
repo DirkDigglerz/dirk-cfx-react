@@ -1,10 +1,9 @@
 import { useAudio } from "@/hooks/useAudio/store";
+import { colorWithAlpha } from "@/utils";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Flex, FlexProps, Text, useMantineTheme } from "@mantine/core";
+import { Flex, FlexProps, useMantineTheme } from "@mantine/core";
 import { motion } from "framer-motion";
 import { MotionFlex, MotionIcon, MotionText } from "./Motion";
-import { colorWithAlpha } from "@/utils";
 
 
 export type SegmentProps = {

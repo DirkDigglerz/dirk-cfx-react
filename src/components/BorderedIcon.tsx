@@ -1,8 +1,10 @@
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useMantineTheme } from "@mantine/core";
+import { Flex, useMantineTheme } from "@mantine/core";
 import {colorWithAlpha} from "@/utils/colorWithAlpha";
-
+import { useSettings } from "@/providers";
+import { TornWrapper } from "./TornWrapper";
+import { useTornEdges } from "@/hooks";
 
 
 export type BorderedIconProps = {
@@ -17,23 +19,33 @@ export type BorderedIconProps = {
 
 export function BorderedIcon(props: BorderedIconProps){
   const theme = useMantineTheme();
+  const tornEdgeCSS = useTornEdges();
   return (
-    <FontAwesomeIcon
-      icon={props.icon as IconName}
-      color={colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][theme.primaryShade as number], props.hovered ? 0.9: 0.9)}
+    <Flex
+      className={tornEdgeCSS}
+      justify={'center'}
+      align={'center'}
       style={{
-        // backgroundColor: colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][7 as number], (props.hoverable ? (props.hovered ? 0.3 : 0.2) : 0.2)),
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      
-        padding: props.p || theme.spacing.xs,
-        transition: 'all 0.2s ease-in-out',
-        aspectRatio: '1/1', 
-        fontSize: props.fontSize ? props.fontSize: '2.5vh',
-        borderRadius: theme.radius.xs,
-        // border: `2px solid var(--mantine-primary-color-9)`,
-        outline: `0.2vh solid ${colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][9], 0.8)}`,
-        boxShadow: `inset 0 0 2vh ${colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][7], 0.5)}`
+  
+          padding: props.p || theme.spacing.xs,
+          transition: 'all 0.2s ease-in-out',
+          aspectRatio: '1/1', 
+          fontSize: props.fontSize ? props.fontSize: '2.5vh',
+          borderRadius: theme.radius.xs,
+          // border: `2px solid var(--mantine-primary-color-9)`,
+          // outline: `0.2vh solid ${colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][9], 0.8)}`,
+          boxShadow: `inset 0 0 2vh ${colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][7], 0.5)}`
       }}
-    />
+    >
+      <FontAwesomeIcon
+        icon={props.icon as IconName}
+        color={colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][theme.primaryShade as number], props.hovered ? 0.9: 0.9)}
+        style={{
+          // backgroundColor: colorWithAlpha(props.color ? props.color : theme.colors[theme.primaryColor][7 as number], (props.hoverable ? (props.hovered ? 0.3 : 0.2) : 0.2)),
+          
+        }}
+      />
+    </Flex>
   )
 }

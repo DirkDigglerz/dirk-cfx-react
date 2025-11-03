@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { AnimatePresence } from "framer-motion";
-import { MotionFlex, MotionIcon } from "../Motion";
+import { MotionFlex, MotionIcon } from "./Motion";
 import { useModal, useModalActions } from "./ModalStore";
 
 export default function Modal(){

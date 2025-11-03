@@ -15,6 +15,7 @@ type SkillStore = {
 };
 
 type SkillHookResult = {
+  prevLevelXP: number;
   currentLevel: number;
   nextLevel: number;
   currentLevelXP: number;
@@ -85,11 +86,12 @@ export function createSkill(defaultSettings: SkillSettings) {
         : 100;
 
       const xpToNextLevel = Math.max(0, nextLevelXP - xp);
-
+      const prevLevelXP = calculateXPForLevel(currentLevel - 1, settings);
       return {
         currentLevel,
         nextLevel,
         currentLevelXP,
+        prevLevelXP,
         nextLevelXP,
         progressToLevel: Math.min(100, Math.max(0, progressToLevel)),
         xpToNextLevel,

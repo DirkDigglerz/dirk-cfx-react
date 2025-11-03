@@ -1,7 +1,8 @@
+
 import { useAudio } from "@/hooks/useAudio/store";
 import { colorWithAlpha } from "@/utils";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { Flex, FlexProps, useMantineTheme } from "@mantine/core";
+import { alpha, Flex, FlexProps, useMantineTheme } from "@mantine/core";
 import { motion } from "framer-motion";
 import { MotionFlex, MotionIcon, MotionText } from "./Motion";
 
@@ -11,6 +12,7 @@ export type SegmentProps = {
   value: string;
   icon?: string; // Optional icon for the segment
   rightSection?: React.ReactNode;
+  color?: string;
 }
 
 export type SegmentedControlProps = {
@@ -22,9 +24,11 @@ export type SegmentedControlProps = {
   justify?: FlexProps['justify']; 
   items: SegmentProps[];
   sounds?: boolean;
+  enableRadius?: boolean;
+  color?: string;
 } & FlexProps;
 
-export function SegmentedControl(props: SegmentedControlProps) {
+export  function SegmentedControl(props: SegmentedControlProps) {
   const theme = useMantineTheme();
   const play = useAudio((state) => state.play);
 
@@ -40,7 +44,7 @@ export function SegmentedControl(props: SegmentedControlProps) {
       bg='rgba(33, 33, 33, 0.6)'
       w={props.w || 'fit-content'}
       style={{
-        borderRadius: theme.radius.xs,
+        borderRadius: props.enableRadius !== false ? theme.radius.xs : 0,
         overflow: 'hidden',
       }}
       {...props}
@@ -66,6 +70,7 @@ export function SegmentedControl(props: SegmentedControlProps) {
             icon={item.icon}
             rightSection={item.rightSection}
             fz={props.fz}
+            color={props.color}
             selected={!props.multi ? props.value === item.value : Array.isArray(props.value) && props.value.includes(item.value)}
             onClick={() => {
 
@@ -88,7 +93,7 @@ export function SegmentedControl(props: SegmentedControlProps) {
   )
 }
 
-export function Segment(props: SegmentProps & {
+function Segment(props: SegmentProps & {
   selected: boolean;
   onClick: () => void;
   fz?: string;
@@ -103,7 +108,7 @@ export function Segment(props: SegmentProps & {
       align="center"
       // p='xs'
       h='100%'
-      bg={props.selected ? colorWithAlpha(theme.colors[theme.primaryColor][theme.primaryShade as number], 0.2) : 'transparent'}
+      bg={props.selected ? props.color ? alpha(props.color, 0.2) : colorWithAlpha(theme.colors[theme.primaryColor][theme.primaryShade as number], 0.2) : 'transparent'}
       pos="relative"
       style={{
         // position: "relative",
@@ -125,10 +130,10 @@ export function Segment(props: SegmentProps & {
             icon={props.icon as IconProp}
             // size='sm'
             initial={{
-              color: props.selected ? theme.colors[theme.primaryColor][5] : 'inherit',  
+              color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
             }}
             animate={{
-              color: props.selected ? theme.colors[theme.primaryColor][5] : 'inherit',  
+              color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
             }}
             exit={{
               color: 'inherit',
@@ -142,10 +147,10 @@ export function Segment(props: SegmentProps & {
         <MotionText
           size={props.fz || 'xs'}
           initial={{
-            color: props.selected ? theme.colors[theme.primaryColor][5] : 'inherit',  
+            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
           }}
           animate={{
-            color: props.selected ? theme.colors[theme.primaryColor][5] : 'inherit',  
+            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
           }}
           exit={{
             color: 'inherit',
@@ -176,7 +181,7 @@ export function Segment(props: SegmentProps & {
           left: 0,
           right: 0,
           height: '0.2vh',
-          backgroundColor: theme.colors[theme.primaryColor][5],
+          backgroundColor: props.color || theme.colors[theme.primaryColor][5],
           transformOrigin: 'center',
         }}
       />

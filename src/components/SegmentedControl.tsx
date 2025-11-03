@@ -24,7 +24,7 @@ export type SegmentedControlProps = {
   justify?: FlexProps['justify']; 
   items: SegmentProps[];
   sounds?: boolean;
-  enableRadius?: boolean;
+  enableradius?: boolean;
   color?: string;
 } & FlexProps;
 
@@ -44,7 +44,7 @@ export  function SegmentedControl(props: SegmentedControlProps) {
       bg='rgba(33, 33, 33, 0.6)'
       w={props.w || 'fit-content'}
       style={{
-        borderRadius: props.enableRadius !== false ? theme.radius.xs : 0,
+        borderRadius: props.enableradius !== false ? theme.radius.xs : 0,
         overflow: 'hidden',
       }}
       {...props}

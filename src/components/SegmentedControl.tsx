@@ -147,13 +147,13 @@ function Segment(props: SegmentProps & {
         <MotionText
           size={props.fz || 'xs'}
           initial={{
-            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
+            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'rgba(255, 255, 255, 0.7)',  
           }}
           animate={{
-            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'inherit',  
+            color: props.selected ? props.color || theme.colors[theme.primaryColor][5] : 'rgba(255, 255, 255, 0.7)',  
           }}
           exit={{
-            color: 'inherit',
+            color: 'rgba(255, 255, 255, 0.7)',
           }}
           style={{
             fontFamily: 'Akrobat Bold',

@@ -10,7 +10,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { BackgroundImage, MantineColorShade, MantineProvider, MantineThemeOverride } from '@mantine/core';
-import { isEnvBrowser } from '@/utils';
+import { isEnvBrowser, useAutoFetcher } from '@/utils';
 import { create } from 'zustand';
 import theme from '@/theme';
 import { useEffect, useMemo } from 'react';
@@ -25,11 +25,13 @@ export const useSettings = create<{
   game: 'rdr3' | 'fivem';
   primaryColor: string;
   primaryShade: number;
+  itemImgPath: string;
   customTheme: Record<string, string[]>;
 }>((set) => ({
-  game: 'rdr3',
-  primaryColor: 'teal',
-  primaryShade: 6,
+  game: 'fivem',
+  primaryColor: 'dirk',
+  primaryShade: 9,
+  itemImgPath: 'https://assets.dirkcfx.com/items/',
   customTheme: {},
 }));
 
@@ -53,7 +55,7 @@ export function DirkProvider(props: DirkProviderProps) {
 
   useEffect(() => {
     document.fonts.ready.then(() => {
- document.body.style.fontFamily = 
+    document.body.style.fontFamily = 
       game === 'rdr3' ? '"Red Dead", sans-serif' :
       game === 'fivem' ? '"Akrobat Regular", sans-serif' :
       'sans-serif';
@@ -61,6 +63,10 @@ export function DirkProvider(props: DirkProviderProps) {
     });
   }, [game]);
 
+
+  useAutoFetcher();
+  
+  
   return (
     <MantineProvider theme={mergedTheme} defaultColorScheme='dark'>
       <Wrapper>

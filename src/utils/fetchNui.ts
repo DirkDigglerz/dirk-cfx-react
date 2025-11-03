@@ -1,17 +1,9 @@
+import { useEffect } from "react";
 import { isEnvBrowser } from "./misc";
 
 /**
- * Simple wrapper around fetch API tailored for CEF/NUI use. This abstraction
- * can be extended to include AbortController if needed or if the response isn't
- * JSON. Tailor it to your needs.
- *
- * @param eventName - The endpoint eventname to target
- * @param data - Data you wish to send in the NUI Callback
- * @param mockData - Mock data to be returned if in the browser
- *
- * @return returnData - A promise for the data sent back by the NuiCallbacks CB argument
+ * Simple wrapper around fetch API tailored for CEF/NUI use.
  */
-
 export async function fetchNui<T = unknown>(
   eventName: string,
   data?: unknown,
@@ -24,8 +16,10 @@ export async function fetchNui<T = unknown>(
     },
     body: JSON.stringify(data),
   };
-  if (isEnvBrowser() && mockData !== undefined) return mockData;
-  if (isEnvBrowser()) {
+
+  console.log(mockData);
+  if (isEnvBrowser() && mockData) return mockData;
+  if (isEnvBrowser() && mockData === undefined) {
     console.warn(
       `[fetchNui] Called fetchNui for event "${eventName}" in browser environment without mockData. Returning empty object.`,
     );
@@ -37,37 +31,55 @@ export async function fetchNui<T = unknown>(
     : "nui-frame-app";
 
   const resp = await fetch(`https://${resourceName}/${eventName}`, options);
+  return await resp.json();
+}
 
-  const respFormatted = await resp.json();
+// -----------------------------
+// Initial fetch registration
+// -----------------------------
+export type InitialFetch<T> = () => Promise<T>;
+export const initialFetches: Record<string, InitialFetch<unknown>> = {};
 
-  return respFormatted;
+/**
+ * Registers an initial fetch that automatically uses fetchNui.
+ * Works like:
+ * ```ts
+ * registerInitialFetch<{ name: string }>("MY_EVENT_NAME", undefined, { name: "Mocky" });
+ * ```
+ * and returns a Promise resolving to the same type as fetchNui.
+ */
+export async function registerInitialFetch<T = unknown>(
+  eventName: string,
+  data?: unknown,
+  mockData?: T,
+): Promise<T> {
+  const fetcher = () => fetchNui<T>(eventName, data, mockData);
+  initialFetches[eventName] = fetcher;
+  return fetcher(); // run immediately if needed
 }
 
 /**
- * fetchOnLoad — triggers fetchNui immediately when called.
- * Can safely be used anywhere (even top-level, outside React).
- *
- * Usage:
- *   fetchOnLoad<MyType>("getData").then(data => myStore.setState({ data }));
+ * Runs all registered initial fetches in parallel.
  */
-export function fetchOnLoad<T = unknown>(
-  eventName: string,
-  data?: unknown,
-  mockData?: T
-): Promise<T> {
-  // just call it directly
-  return fetchNui<T>(eventName, data, mockData)
-    .catch((err) => {
-      console.error(`[fetchOnLoad] Failed for ${eventName}:`, err);
-      throw err;
-    });
+export async function runFetches() {
+  return Promise.all(
+    Object.entries(initialFetches).map(async ([eventName, fetcher]) => {
+      const data = await fetcher();
+      return { eventName, data };
+    }),
+  );
 }
 
-
-export const fetchLuaTable = <T>(tableName: string) => () => {
-  if (isEnvBrowser()) {
-    return Promise.resolve({} as T);
-  }
-  return fetchNui<T>('GET_LUA_TABLE', { tableName });
+/**
+ * React hook to automatically run all registered fetches on mount.
+ */
+export const useAutoFetcher = () => {
+  useEffect(() => {
+    if (isEnvBrowser()) return;
+    const run = async () => {
+      const results = await runFetches();
+      console.log("[useAutoFetcher] Fetched initial data:", results);
+    };
+    run();
+  }, []);
 };
-

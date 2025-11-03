@@ -1,12 +1,25 @@
-import { MotionFlex, MotionIcon } from "@/components/Motion";
+
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
 import { AnimatePresence } from "framer-motion";
+import { MotionFlex, MotionIcon } from "../Motion";
 import { useModal, useModalActions } from "./store";
 
 export default function Modal(){
   const active = useModal((state) => state.active);
   const {hideModal} = useModalActions();
+  
+  const ref = useClickOutside(() => {
+    if (!active) return;
+    if (active.clickOutside == false) return;
+    if (active) {
+    
+      hideModal();
+    }
+  });
+
   const theme = useMantineTheme();
   
   return (
@@ -34,7 +47,8 @@ export default function Modal(){
             pos='absolute'
             top='50%'
             left='50%'
-            w='40%'
+            ref={ref}
+            w={active.width || '40%'}
             style={{
               transform: 'translate(-50%, -50%)',
               borderRadius: theme.radius.xs,
@@ -49,7 +63,7 @@ export default function Modal(){
             p='sm'
             direction='column'
             // align='flex-start'
-            mah='80%'
+            // mah='80%'
             maw='70%'
             gap='xs'
           >
@@ -65,7 +79,7 @@ export default function Modal(){
               >
                 {active.icon && (
                   <FontAwesomeIcon 
-                    icon={active.icon as any} 
+                    icon={active.icon as IconProp} 
                     style={{
                       fontSize: theme.fontSizes.xs,
                     }} 
@@ -93,12 +107,14 @@ export default function Modal(){
                   }}
                 />
               </Flex>
-              <Text
-                size="xs"
-                c='rgba(255, 255, 255, 0.7)'
-              >
-                {active.description}
-              </Text>
+              {active.description && (
+                <Text
+                  size="xs"
+                  c='rgba(255, 255, 255, 0.7)'
+                >
+                  {active.description}
+                </Text>
+              )}
             </Flex>
             {active.children}
           </MotionFlex>

@@ -15,7 +15,6 @@ export type TitleProps = {
   description: string;
   icon: string;
   iconColor?: string;
-  mt?: string;
   bg?: string;
   w?: string;
   removeBorder?: boolean;
@@ -30,18 +29,10 @@ export function Title(props: TitleProps) {
   const theme = useMantineTheme();
   return (
     <Flex
-      mt={props.mt}
       direction='column'
-      // align='center'
       bg={props.bg || 'transparent'}
       gap='xs'
-      // flex={1}
-      // w='90%'
-
       w={props.w || '100%'}
-      
-      // pb={props.removeBorder ? '0' : 'xs'}
-      // pl={!props.removeBorder ? 'xs' : '0'}
       p={props.p || '0'}
       style={{
         userSelect: 'none',
@@ -49,7 +40,6 @@ export function Title(props: TitleProps) {
       }}
     >
       <Flex
-   
         align='center'
         justify={'center'}
       >
@@ -81,10 +71,7 @@ export function Title(props: TitleProps) {
               style={{ whiteSpace: 'normal', wordWrap: 'break-word' }}
             >{props.description}</Text>
           </Flex>
-
-
         </Flex>
-
         <Flex
           ml='auto'
           align='center'

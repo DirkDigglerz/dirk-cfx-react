@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { fetchOnLoad } from "../utils/fetchNui";
+import { registerInitialFetch } from "../utils/fetchNui";
 
 
 type localeType = (key: string, ...args: string[]) => string;
@@ -40,6 +40,6 @@ export const localeStore = create<LocaleStoreProps>((set, get) => {
 // export locale as a standalone function 
 export const locale = localeStore.getState().locale;
 
-fetchOnLoad<LocalesProps>('GET_LOCALES').then((data) => {
+registerInitialFetch<LocalesProps>('GET_LOCALES', undefined).then((data) => {
   localeStore.setState({ locales: data });
 });

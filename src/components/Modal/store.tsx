@@ -6,8 +6,10 @@ type ModalProps = {
   children: React.ReactNode;
   title: string;
   icon: string;
-  description: string;
+  description?: string;
   height?: string;
+  width?: string;
+  clickOutside?: boolean;
 };
 
 type ModalStore = {
@@ -53,3 +55,4 @@ export function useModalActions() {
 
   return { showModal, hideModal };
 }
+

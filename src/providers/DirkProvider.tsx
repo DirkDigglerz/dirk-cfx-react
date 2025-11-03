@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import './styles/notify.css';
 import './styles/fonts.css';
 import './styles/scrollBar.css';
 import './styles/tornEdge.css';
@@ -10,7 +11,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { BackgroundImage, MantineColorShade, MantineProvider, MantineThemeOverride } from '@mantine/core';
-import { isEnvBrowser, useAutoFetcher } from '@/utils';
+import { fetchNui, isEnvBrowser, useAutoFetcher } from '@/utils';
 import { create } from 'zustand';
 import theme from '@/theme';
 import { useEffect, useMemo } from 'react';
@@ -63,6 +64,9 @@ export function DirkProvider(props: DirkProviderProps) {
     });
   }, [game]);
 
+  useEffect(() => {
+    fetchNui('NUI_READY')
+  },  []);
 
   useAutoFetcher();
   

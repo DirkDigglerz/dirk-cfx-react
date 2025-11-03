@@ -1,9 +1,20 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, MantineTheme, NumberInput } from "@mantine/core";
+
+export const label = {
+  fontSize: 'var(--mantine-font-size-xs)',
+  fontFamily: 'Akrobat Bold',
+  letterSpacing: '0.05em',
+  textTransform: 'uppercase', 
+};
+export const error = {
+  fontSize: 'var(--mantine-font-size-xs)',
+  fontFamily: 'Akrobat Regular',
+};
 
 const theme = createTheme({
   primaryColor: "dirk",
   primaryShade: 9,
-  defaultRadius: "xxs",
+  defaultRadius: "xs",
   fontFamily: "Akrobat Regular, sans-serif",
 
   radius:{
@@ -26,6 +37,15 @@ const theme = createTheme({
     xxl: '3.8vh',
   },
 
+  lineHeights: {
+    xxs: '1.4vh',
+    xs: '1.8vh',
+    sm: '2.2vh',
+    md: '2.8vh',
+    lg: '3.3vh',
+    xl: '3.8vh',
+  },
+
   spacing:{
     xxs: '0.5vh',
     xs: '0.75vh',
@@ -39,84 +59,111 @@ const theme = createTheme({
   components:{
     Progress:{
       styles:{
+        label: {
+          fontFamily: 'Akrobat Bold',
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase', 
+          
+        },
         root:{
           backgroundColor: 'rgba(77, 77, 77, 0.4)',
         },
         
       }
     },
+    Textarea: {
+      styles:{
+        label: label,
+        error: error,
+      },
+    },
+
+    Button:{
+      styles:{
+        root:{
+          fontSize: 'var(--mantine-font-size-xs)',
+        },
+      },
+    },
 
     Select:{
       styles:{
-        dropdown:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
         input:{
           padding: 'var(--mantine-spacing-sm)',
         },
-        item:{
-          
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        wrapper:{
-          
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        option:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-
       }
     },
-    MultiSelect:{
-      styles:{
-        dropdown:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        pill:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        item:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        wrapper:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
-        option:{
-          borderRadius: 'var(--mantine-radius-xxs)',
-        },
 
-      }
+    Pill: {
+      styles: (theme: MantineTheme) => ({
+        root: {
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: 'rgba(76, 76, 76, 0.3)',
+          height: 'fit-content',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+          fontFamily: 'Akrobat Bold',
+          fontSize: theme.fontSizes.xs,
+          borderRadius: theme.defaultRadius,
+          padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+        }
+      })
+    },
+
+    Input:{
+      styles: {
+        label: label,
+        error: error,
+
+        input:{
+          padding: 'var(--mantine-spacing-sm)',
+          backgroundColor: 'rgba(76, 76, 76, 0.3)', 
+        },
+      },
+    },
+    ColorInput:{
+      styles: {
+        label: label,
+        input:{
+          padding: 'var(--mantine-spacing-sm)',
+        },
+      },
     },
     TextInput:{
       styles:{
+        label: label,
+        wrapper:{
+        
+        },
         section:{
           marginRight: '0.2vh',
         },
 
         input:{
           padding: 'var(--mantine-spacing-sm)',
+          
+          
         },
-
-       
-        
       }
     },
+    NumberInput:{
+      
+      styles:{
+        label: label,
+        input:{
+          padding: 'var(--mantine-spacing-sm)',
+        },
+        section:{
+          pointerEvents: 'all',
+        },
+      }
+    }
   },
 
   colors: {
-    dark:[
-      "#ffffff",
-      "#e2e2e2",
-      "#c6c6c6",
-      "#aaaaaa",
-      "#8d8d8d",
-      "#717171",
-      "#555555",
-      "#393939",
-      "#1c1c1c",
-      "#000000",
-    ],
+
     dirk:[
       "#ffffff",
       "#f3fce9",

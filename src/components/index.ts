@@ -8,3 +8,4 @@ export * from "./Navigation";
 export * from "./SegmentedControl";
 export * from "./SegmentedProgress";
 export * from "./Title";
+export * from "./Modal/index";

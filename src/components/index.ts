@@ -11,4 +11,5 @@ export * from "./Title";
 export * from "./LevelBanner";
 export * from "./LevelPanel";
 export * from "./Modal";
+export * from "./PromptModal";
 export * from "./ModalStore";

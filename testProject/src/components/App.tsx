@@ -1,4 +1,4 @@
-import { createSkill, DirkProvider, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
+import { createSkill, DirkProvider, ModalProvider, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 import { useFastTravel } from "./useFastTravel";

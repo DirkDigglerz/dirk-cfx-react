@@ -17,7 +17,7 @@ export type Prompt = {
   buttons: PromptButton[];
 };
 
-export default function PromptModal(props: Prompt) {
+export function PromptModal(props: Prompt) {
   const theme = useMantineTheme();
   return (
     <MotionFlex

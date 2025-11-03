@@ -1,5 +1,5 @@
 import { useMantineTheme, Flex, Text } from "@mantine/core";
-import { MotionFlex } from "dirk-cfx-react";
+import { MotionFlex } from "./Motion";
 import { Variants } from "framer-motion";
 
 export type InputContainerProps = {

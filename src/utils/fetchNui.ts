@@ -17,7 +17,6 @@ export async function fetchNui<T = unknown>(
     body: JSON.stringify(data),
   };
 
-  console.log(mockData);
   if (isEnvBrowser() && mockData) return mockData;
   if (isEnvBrowser() && mockData === undefined) {
     console.warn(

@@ -11,7 +11,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { BackgroundImage, MantineColorShade, MantineProvider, MantineThemeOverride } from '@mantine/core';
-import { fetchNui, isEnvBrowser, useAutoFetcher } from '@/utils';
+import { fetchNui, isEnvBrowser, registerInitialFetch, useAutoFetcher } from '@/utils';
 import { create } from 'zustand';
 import theme from '@/theme';
 import { useEffect, useMemo } from 'react';
@@ -22,13 +22,15 @@ export type DirkProviderProps = {
   children: React.ReactNode;
 }
 
-export const useSettings = create<{
+type SettingsProps = {
   game: 'rdr3' | 'fivem';
   primaryColor: string;
   primaryShade: number;
   itemImgPath: string;
   customTheme: Record<string, string[]>;
-}>((set) => ({
+}
+
+export const useSettings = create<SettingsProps>((set) => ({
   game: 'fivem',
   primaryColor: 'dirk',
   primaryShade: 9,
@@ -37,6 +39,17 @@ export const useSettings = create<{
 }));
 
 
+registerInitialFetch<Partial<SettingsProps>>("GET_SETTINGS", undefined, {
+  game: 'fivem',
+  primaryColor: 'dirk',
+  primaryShade: 9,
+  itemImgPath: 'https://assets.dirkcfx.com/items/',
+  customTheme: {},
+}).then((data) => {
+  useSettings.setState({
+    ...data,
+  });
+});
 
 export function DirkProvider(props: DirkProviderProps) {
   const primaryColor = useSettings((data) => data.primaryColor);

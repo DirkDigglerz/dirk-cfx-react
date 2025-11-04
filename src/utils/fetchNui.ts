@@ -77,7 +77,6 @@ export const useAutoFetcher = () => {
     if (isEnvBrowser()) return;
     const run = async () => {
       const results = await runFetches();
-      console.log("[useAutoFetcher] Fetched initial data:", results);
     };
     run();
   }, []);

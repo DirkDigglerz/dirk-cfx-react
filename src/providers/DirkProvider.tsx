@@ -73,7 +73,6 @@ export function DirkProvider(props: DirkProviderProps) {
       game === 'rdr3' ? '"Red Dead", sans-serif' :
       game === 'fivem' ? '"Akrobat Regular", sans-serif' :
       'sans-serif';
-    console.log(`Game set to ${game}, applied corresponding font family.: ${document.body.style.fontFamily}`);
     });
   }, [game]);
 

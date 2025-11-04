@@ -1,12 +1,12 @@
 import { MutableRefObject, useEffect, useRef } from "react";
 import { noop } from "../utils/misc";
 
-interface NuiMessageData<T = unknown> {
+export interface NuiMessageData<T = unknown> {
   action: string;
   data: T;
 }
 
-type NuiHandlerSignature<T> = ( data: T) => void;
+export type NuiHandlerSignature<T> = ( data: T) => void;
 
 /**
  * A hook that manage events listeners for receiving data from the client scripts

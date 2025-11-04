@@ -26,9 +26,3 @@ export function createScriptSettings<T>(defaultValue: T) {
 } 
 
 
-export const {store: useScriptSettings, useScriptSettingHooks} = createScriptSettings<{
-  game: 'fivem' | 'ragemp' | 'altv';
-}>({
-  game: 'fivem'
-});
-

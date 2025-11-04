@@ -1,7 +1,7 @@
 import { AnimatePresence } from "framer-motion";
 import { MotionFlex } from "./Motion";
 
-export function Counter(props: {count: number, color?: string}) {
+export function Counter(props: {count: number, color?: string, style?: React.CSSProperties}) {
   return (
     <AnimatePresence>
       {props.count > 0 && (
@@ -22,6 +22,7 @@ export function Counter(props: {count: number, color?: string}) {
             marginBottom: '0.3vh',
             fontFamily: 'Akrobat Bold',
             boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+            ...props.style
           }}
         >
           {props.count}

@@ -95,16 +95,18 @@ export function DirkProvider(props: DirkProviderProps) {
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   const game = useSettings((data) => data.game);
-  return isEnvBrowser() ? ( 
-    <BackgroundImage w='100vw' h='100vh' style={{overflow:'hidden'}}
-      src={game === 'fivem' ?
-        "https://i.ytimg.com/vi/TOxuNbXrO28/maxresdefault.jpg"
-        : "https://raw.githubusercontent.com/Jump-On-Studios/RedM-jo_libs/refs/heads/main/source-repositories/Menu/public/assets/images/background_dev.jpg"}
-    >  
+  if (!isEnvBrowser()) return <>{children}</>;
+  return (
+    <BackgroundImage
+      w="100vw"
+      h="100vh"
+      style={{ overflow: 'hidden', backgroundColor: 'transparent' }}
+      src={game === 'fivem'
+        ? 'https://i.ytimg.com/vi/TOxuNbXrO28/maxresdefault.jpg'
+        : 'https://raw.githubusercontent.com/Jump-On-Studios/RedM-jo_libs/refs/heads/main/source-repositories/Menu/public/assets/images/background_dev.jpg'}
+    >
       {children}
     </BackgroundImage>
-  ) : (
-    <>{children}</>
-  )
+  );
 }
 

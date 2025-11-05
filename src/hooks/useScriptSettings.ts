@@ -12,6 +12,7 @@
 import { useNuiEvent } from "@/hooks";
 import { fetchNui } from "@/utils";
 import { create } from "zustand";
+type NuiResponse = { success: boolean; message: string };
 
 // it will basically rturn a zustand store aswell as aset of hooks required to operate/update this store 
 export function createScriptSettings<T>(defaultValue: T) {
@@ -24,10 +25,12 @@ export function createScriptSettings<T>(defaultValue: T) {
   };
 
   // below returns {success, message} from the nui event
-  const updateScriptSettings = async (newSettings: Partial<T>) : Promise<{success: boolean; message: string}> => {
+
+  const updateScriptSettings = async (newSettings: Partial<T>): Promise<NuiResponse> => {
     store.setState((prev) => ({ ...prev, ...newSettings }));
-    return await fetchNui("UPDATE_SCRIPT_SETTINGS", newSettings);
+    return await fetchNui<NuiResponse>("UPDATE_SCRIPT_SETTINGS", newSettings);
   };
+
   return {store, updateScriptSettings, useScriptSettingHooks}
 } 
 

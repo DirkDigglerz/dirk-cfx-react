@@ -10,6 +10,7 @@
 // })
 
 import { useNuiEvent } from "@/hooks";
+import { fetchNui } from "@/utils";
 import { create } from "zustand";
 
 // it will basically rturn a zustand store aswell as aset of hooks required to operate/update this store 
@@ -21,8 +22,11 @@ export function createScriptSettings<T>(defaultValue: T) {
       store.setState((prev) => ({ ...prev, ...newSettings }));
     });
   };
-
-  return {store, useScriptSettingHooks}
+  const updateSettings = (newSettings: Partial<T>) => {
+    store.setState((prev) => ({ ...prev, ...newSettings }));
+    fetchNui("UPDATE_SCRIPT_SETTINGS", store.getState());
+  };
+  return {store, updateSettings, useScriptSettingHooks}
 } 
 
 

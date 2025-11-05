@@ -22,9 +22,11 @@ export function createScriptSettings<T>(defaultValue: T) {
       store.setState((prev) => ({ ...prev, ...newSettings }));
     });
   };
-  const updateScriptSettings = (newSettings: Partial<T>) => {
+
+  // below returns {success, message} from the nui event
+  const updateScriptSettings = async (newSettings: Partial<T>) : Promise<{success: boolean; message: string}> => {
     store.setState((prev) => ({ ...prev, ...newSettings }));
-    fetchNui("UPDATE_SCRIPT_SETTINGS", store.getState());
+    return await fetchNui("UPDATE_SCRIPT_SETTINGS", newSettings);
   };
   return {store, updateScriptSettings, useScriptSettingHooks}
 } 

@@ -22,11 +22,11 @@ export function createScriptSettings<T>(defaultValue: T) {
       store.setState((prev) => ({ ...prev, ...newSettings }));
     });
   };
-  const updateSettings = (newSettings: Partial<T>) => {
+  const updateScriptSettings = (newSettings: Partial<T>) => {
     store.setState((prev) => ({ ...prev, ...newSettings }));
     fetchNui("UPDATE_SCRIPT_SETTINGS", store.getState());
   };
-  return {store, updateSettings, useScriptSettingHooks}
+  return {store, updateScriptSettings, useScriptSettingHooks}
 } 
 
 

@@ -69,7 +69,7 @@ export function DirkProvider(props: DirkProviderProps) {
     },
     ...props.themeOverride, // Props theme will override/extend the entire theme
   }), [primaryColor, primaryShade, customTheme, props.themeOverride]);
-
+  console.log(mergedTheme)
   useEffect(() => {
     document.fonts.ready.then(() => {
     document.body.style.fontFamily = 

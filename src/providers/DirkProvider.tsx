@@ -20,6 +20,7 @@ library.add(fas, far, fab);
 export type DirkProviderProps = {
   fakeBackground?: boolean;
   children: React.ReactNode;
+  themeOverride?: MantineThemeOverride;
 }
 
 type SettingsProps = {
@@ -64,8 +65,10 @@ export function DirkProvider(props: DirkProviderProps) {
     colors: {
       ...theme.colors,
       ...customTheme, // Custom theme colors will override/extend base colors
+      ...props.themeOverride?.colors, // Props theme colors will override/extend previous colors
     },
-  }), [primaryColor, primaryShade, customTheme]);
+    ...props.themeOverride, // Props theme will override/extend the entire theme
+  }), [primaryColor, primaryShade, customTheme, props.themeOverride]);
 
   useEffect(() => {
     document.fonts.ready.then(() => {

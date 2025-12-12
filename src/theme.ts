@@ -88,6 +88,7 @@ const theme = createTheme({
 
     Select:{
       styles:{
+        label: label,
         input:{
           padding: 'var(--mantine-spacing-sm)',
         },

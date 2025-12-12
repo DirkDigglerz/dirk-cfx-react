@@ -18,8 +18,8 @@ const theme = createTheme({
   fontFamily: "Akrobat Regular, sans-serif",
 
   radius:{
-    xxs: '0.2vh',
-    xs: '0.4vh',
+    xxs: '0.3vh',
+    xs: '0.5vh',
     sm: '0.75vh',
     md: '1vh',
     lg: '1.5vh',

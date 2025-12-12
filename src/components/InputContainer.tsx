@@ -1,4 +1,4 @@
-import { useMantineTheme, Flex, Text } from "@mantine/core";
+import { useMantineTheme, Flex, Text, alpha } from "@mantine/core";
 import { MotionFlex } from "./Motion";
 import { Variants } from "framer-motion";
 
@@ -26,13 +26,15 @@ export function InputContainer(props: InputContainerProps){
       direction='column'
       h={props.h}
       gap={props.title ? 'xs' : 0}
-      bg={props.bg || 'linear-gradient(180deg, rgba(30, 30, 30, 0.82) 0%, rgba(30, 30, 30, 0.3) 50%, rgba(30, 30, 30, 0.6) 100%)'}
+      
+
+      bg={props.bg || alpha('var(--mantine-color-dark-9)', 0.65)}
       p={props.p || 'sm'}
       style={{
         borderRadius: theme.radius.xs,
         boxShadow: theme.shadows.sm,
         overflow: 'hidden',
-        outline: props.error ? `1px solid rgba(255, 100, 100, 0.8)` : '0.2vh solid rgba(255,255,255,0.1)', 
+        border: props.error ? `1px solid rgba(255, 100, 100, 0.8)` : '1px solid var(--mantine-color-dark-7)', 
         ...props.style,
       }}
       variants={props.variants}

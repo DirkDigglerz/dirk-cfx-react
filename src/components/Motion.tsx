@@ -1,9 +1,7 @@
-import { fetchNui } from "@/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Flex, Image, Text } from "@mantine/core";
 import { motion } from "framer-motion";
 import React from "react";
-import { create } from "zustand";
 
 // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'Flex' implicitly has an 'any' type.
 export const MotionFlex = motion.create(Flex) as React.ComponentType<any>;

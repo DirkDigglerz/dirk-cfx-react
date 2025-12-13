@@ -1,5 +1,4 @@
-import { useSettings } from "@/providers";
-
+import { useSettings } from "@/utils/useSettings";
 export function useTornEdges() {
   const game = useSettings((state) => state.game);
   return game === "rdr3" ? "torn-edge-wrapper" : "";

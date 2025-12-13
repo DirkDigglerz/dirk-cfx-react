@@ -2,8 +2,7 @@ import { colorWithAlpha } from "@/utils";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
 import { BorderedIcon } from "./BorderedIcon";
-import { useSettings } from "..";
-
+import { useSettings } from "@/utils/useSettings";
 
 export type ButtonProps = {
   icon: string;

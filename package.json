@@ -1,6 +1,6 @@
 {
   "name": "dirk-cfx-react",
-  "version": "1.1.2",
+  "version": "1.1.1",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -43,8 +43,8 @@
     "src/fonts"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs --clean",
-    "watch": "tsup src/index.ts --watch --dts --format esm,cjs --clean",
+    "build": "tsup",
+    "watch": "tsup --watch",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

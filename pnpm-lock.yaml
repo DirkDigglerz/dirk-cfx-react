@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@mantine/hooks':
-        specifier: ^8.3.5
-        version: 8.3.5(react@19.2.0)
+        specifier: ^8.3.9
+        version: 8.3.10(react@19.2.0)
       axios:
         specifier: ^1.13.1
         version: 1.13.1
@@ -32,10 +32,10 @@ importers:
         version: 3.1.0(@fortawesome/fontawesome-svg-core@7.1.0)(react@19.2.0)
       '@mantine/core':
         specifier: ^8.3.9
-        version: 8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        version: 8.3.10(@mantine/hooks@8.3.10)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@mantine/notifications':
         specifier: ^8.3.9
-        version: 8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0)
+        version: 8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.10)(react-dom@19.2.0)(react@19.2.0)
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -785,7 +785,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.5
     dev: true
 
-  /@mantine/core@8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
+  /@mantine/core@8.3.10(@mantine/hooks@8.3.10)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-aKQFETN14v6GtM07b/G5yJneMM1yrgf9mNrTah6GVy5DvQM0AeutITT7toHqh5gxxwzdg/DoY+HQsv5zhqnc5g==}
     peerDependencies:
       '@mantine/hooks': 8.3.10
@@ -793,7 +793,7 @@ packages:
       react-dom: ^18.x || ^19.x
     dependencies:
       '@floating-ui/react': 0.27.16(react-dom@19.2.0)(react@19.2.0)
-      '@mantine/hooks': 8.3.5(react@19.2.0)
+      '@mantine/hooks': 8.3.10(react@19.2.0)
       clsx: 2.1.1
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -825,14 +825,22 @@ packages:
       - '@types/react'
     dev: false
 
+  /@mantine/hooks@8.3.10(react@19.2.0):
+    resolution: {integrity: sha512-bv+yYHl+keTIvakiDzVJMIjW+o8/Px0G3EdpCMFG+U2ux6SwQqluqoq+/kqrTtT6RaLvQ0fMxjpIULF2cu/xAg==}
+    peerDependencies:
+      react: ^18.x || ^19.x
+    dependencies:
+      react: 19.2.0
+
   /@mantine/hooks@8.3.5(react@19.2.0):
     resolution: {integrity: sha512-0Wf08eWLKi3WkKlxnV1W5vfuN6wcvAV2VbhQlOy0R9nrWorGTtonQF6qqBE3PnJFYF1/ZE+HkYZQ/Dr7DmYSMQ==}
     peerDependencies:
       react: ^18.x || ^19.x
     dependencies:
       react: 19.2.0
+    dev: false
 
-  /@mantine/notifications@8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0):
+  /@mantine/notifications@8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.10)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-0aVpRCyn9u0wuryBnFu1jOwBYw6xGeaNNtTcTUnSvkL6NAypfPon6JG7Wsekf3IuWSTLBjhYaFEIEd4nh7VDpg==}
     peerDependencies:
       '@mantine/core': 8.3.10
@@ -840,8 +848,8 @@ packages:
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
     dependencies:
-      '@mantine/core': 8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@mantine/hooks': 8.3.5(react@19.2.0)
+      '@mantine/core': 8.3.10(@mantine/hooks@8.3.10)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@mantine/hooks': 8.3.10(react@19.2.0)
       '@mantine/store': 8.3.10(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)

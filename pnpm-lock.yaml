@@ -31,11 +31,11 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(@fortawesome/fontawesome-svg-core@7.1.0)(react@19.2.0)
       '@mantine/core':
-        specifier: ^8.3.5
-        version: 8.3.5(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^8.3.9
+        version: 8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@mantine/notifications':
-        specifier: ^8.3.5
-        version: 8.3.5(@mantine/core@8.3.5)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^8.3.9
+        version: 8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0)
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -785,6 +785,26 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.5
     dev: true
 
+  /@mantine/core@8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-aKQFETN14v6GtM07b/G5yJneMM1yrgf9mNrTah6GVy5DvQM0AeutITT7toHqh5gxxwzdg/DoY+HQsv5zhqnc5g==}
+    peerDependencies:
+      '@mantine/hooks': 8.3.10
+      react: ^18.x || ^19.x
+      react-dom: ^18.x || ^19.x
+    dependencies:
+      '@floating-ui/react': 0.27.16(react-dom@19.2.0)(react@19.2.0)
+      '@mantine/hooks': 8.3.5(react@19.2.0)
+      clsx: 2.1.1
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      react-number-format: 5.4.4(react-dom@19.2.0)(react@19.2.0)
+      react-remove-scroll: 2.7.1(@types/react@19.2.2)(react@19.2.0)
+      react-textarea-autosize: 8.5.9(@types/react@19.2.2)(react@19.2.0)
+      type-fest: 4.41.0
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: true
+
   /@mantine/core@8.3.5(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-PdVNLMgOS2vFhOujRi6/VC9ic8w3UDyKX7ftwDeJ7yQT8CiepUxfbWWYpVpnq23bdWh/7fIT2Pn1EY8r8GOk7g==}
     peerDependencies:
@@ -803,6 +823,7 @@ packages:
       type-fest: 4.41.0
     transitivePeerDependencies:
       - '@types/react'
+    dev: false
 
   /@mantine/hooks@8.3.5(react@19.2.0):
     resolution: {integrity: sha512-0Wf08eWLKi3WkKlxnV1W5vfuN6wcvAV2VbhQlOy0R9nrWorGTtonQF6qqBE3PnJFYF1/ZE+HkYZQ/Dr7DmYSMQ==}
@@ -810,6 +831,22 @@ packages:
       react: ^18.x || ^19.x
     dependencies:
       react: 19.2.0
+
+  /@mantine/notifications@8.3.10(@mantine/core@8.3.10)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-0aVpRCyn9u0wuryBnFu1jOwBYw6xGeaNNtTcTUnSvkL6NAypfPon6JG7Wsekf3IuWSTLBjhYaFEIEd4nh7VDpg==}
+    peerDependencies:
+      '@mantine/core': 8.3.10
+      '@mantine/hooks': 8.3.10
+      react: ^18.x || ^19.x
+      react-dom: ^18.x || ^19.x
+    dependencies:
+      '@mantine/core': 8.3.10(@mantine/hooks@8.3.5)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@mantine/hooks': 8.3.5(react@19.2.0)
+      '@mantine/store': 8.3.10(react@19.2.0)
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
+      react-transition-group: 4.4.5(react-dom@19.2.0)(react@19.2.0)
+    dev: true
 
   /@mantine/notifications@8.3.5(@mantine/core@8.3.5)(@mantine/hooks@8.3.5)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-8TvzrPxfdtOLGTalv7Ei1hy2F6KbR3P7/V73yw3AOKhrf1ydS89sqV2ShbsucHGJk9Pto0wjdTPd8Q7pm5MAYw==}
@@ -825,6 +862,15 @@ packages:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-transition-group: 4.4.5(react-dom@19.2.0)(react@19.2.0)
+    dev: false
+
+  /@mantine/store@8.3.10(react@19.2.0):
+    resolution: {integrity: sha512-38t1UivcucZo9hQq27F/eqR5GvovNs4NHEz6DchOuZzV5IJWqO8+T07ivb8wct47ovYe42rPfLcaOdnIEvMsJA==}
+    peerDependencies:
+      react: ^18.x || ^19.x
+    dependencies:
+      react: 19.2.0
+    dev: true
 
   /@mantine/store@8.3.5(react@19.2.0):
     resolution: {integrity: sha512-qN4fFsDMy86IV9oh1gZlDTv41RAsO0grjx90FGyT5QCv7NTgcavwxB74GBkhp45W8xn+Ms/awKy+6NxnmLmW1w==}
@@ -832,6 +878,7 @@ packages:
       react: ^18.x || ^19.x
     dependencies:
       react: 19.2.0
+    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}

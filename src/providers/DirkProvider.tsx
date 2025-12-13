@@ -47,6 +47,7 @@ registerInitialFetch<Partial<SettingsProps>>("GET_SETTINGS", undefined, {
   itemImgPath: 'https://assets.dirkcfx.com/items/',
   customTheme: {},
 }).then((data) => {
+  console.log('Fetched initial settings:');
   useSettings.setState({
     ...data,
   });
@@ -69,8 +70,7 @@ export function DirkProvider(props: DirkProviderProps) {
     },
     ...props.themeOverride, // Props theme will override/extend the entire theme
   }), [primaryColor, primaryShade, customTheme, props.themeOverride]);
-  console.log('created merged theme:');
-  console.log(mergedTheme)
+
   useEffect(() => {
     document.fonts.ready.then(() => {
     document.body.style.fontFamily = 
@@ -85,8 +85,9 @@ export function DirkProvider(props: DirkProviderProps) {
   },  []);
 
   useAutoFetcher();
+  console.log('DirkProvider rendered with game:', game);
   
-  
+  // console.log('Rendering DirkProvider with theme:', mergedTheme);
   return (
     <MantineProvider theme={mergedTheme} defaultColorScheme='dark'>
       <Wrapper>

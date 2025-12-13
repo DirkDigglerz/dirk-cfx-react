@@ -43,8 +43,8 @@
     "src/fonts"
   ],
   "scripts": {
-    "build": "tsup",
-    "watch": "tsup --watch",
+    "build": "tsup src/index.ts --dts --format esm,cjs --clean",
+    "watch": "tsup src/index.ts --watch --dts --format esm,cjs --clean",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
@@ -53,8 +53,8 @@
     "@fortawesome/free-regular-svg-icons": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
-    "@mantine/core": "^8.3.5",
-    "@mantine/notifications": "^8.3.5",
+    "@mantine/core": "^8.3.9",
+    "@mantine/notifications": "^8.3.9",
     "@types/fs-extra": "^11.0.4",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^24.9.1",

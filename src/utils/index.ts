@@ -7,3 +7,4 @@ export * from "./map";
 export * from "./profanity";
 export * from "./createSkill";
 export * from "./images";
+export * from "./useSettings";

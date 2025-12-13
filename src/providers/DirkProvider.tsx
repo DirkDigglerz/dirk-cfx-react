@@ -2,6 +2,17 @@
 
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import './styles/notify.css';
+import './styles/fonts.css';
+import './styles/scrollBar.css';
+import './styles/tornEdge.css';
+
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+library.add(fas, far, fab);
 
 import { MantineProvider, BackgroundImage, MantineColorShade } from "@mantine/core";
 import { useMemo, useEffect } from "react";
@@ -44,6 +55,7 @@ export function DirkProvider({ children, themeOverride }: DirkProviderProps) {
       game === "rdr3"
         ? '"Red Dead", sans-serif'
         : '"Akrobat Regular", sans-serif';
+    console.log(`%cNew Font Applied: ${document.body.style.fontFamily}`, "font-family: " + document.body.style.fontFamily); 
   }, [game]);
 
   const content = isEnvBrowser() ? (

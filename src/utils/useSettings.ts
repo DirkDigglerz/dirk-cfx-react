@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { registerInitialFetch } from "./fetchNui";
+import { MantineColorsTuple } from "@mantine/core";
 
 export type SettingsState = {
   hydrated: boolean;
@@ -7,7 +8,7 @@ export type SettingsState = {
   primaryColor: string;
   primaryShade: number;
   itemImgPath: string;
-  customTheme: Record<string, string[]>;
+  customTheme?: MantineColorsTuple;
 };
 
 export const useSettings = create<SettingsState>(() => ({
@@ -16,7 +17,18 @@ export const useSettings = create<SettingsState>(() => ({
   primaryColor: "dirk",
   primaryShade: 9,
   itemImgPath: "",
-  customTheme: {},
+  customTheme: [
+    "#f0f4ff",
+    "#d9e3ff",
+    "#bfcfff",
+    "#a6bbff",
+    "#8ca7ff",
+    "#7393ff",
+    "#5a7fff",
+    "#406bff",
+    "#2547ff",
+    "#0b33ff",
+  ],
 }));
 
 

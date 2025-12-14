@@ -17,7 +17,7 @@ export async function fetchNui<T = unknown>(
     body: JSON.stringify(data),
   };
 
-  if (isEnvBrowser() && mockData) return mockData;
+  if (isEnvBrowser() && mockData !== undefined) return mockData;
   if (isEnvBrowser() && mockData === undefined) {
     console.warn(
       `[fetchNui] Called fetchNui for event "${eventName}" in browser environment without mockData. Returning empty object.`,

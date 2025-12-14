@@ -88,6 +88,9 @@ export type FormState<T> = {
   initialValues: Partial<T>;
   errors: Record<string, string>;
 
+  /** NEW */
+  partialChanged: Partial<T>;
+
   setValue: (path: string, value: any, options?: { validate?: boolean }) => void;
   setInitialValues: (newInitialValues: Partial<T>) => void;
 
@@ -130,6 +133,7 @@ export function createFormStore<T>(
     initialValues,
     values: initialValues,
     errors: {},
+    partialChanged: {},
     canBack: false,
     canForward: false,
     changedFields: [],
@@ -146,33 +150,47 @@ export function createFormStore<T>(
 
     resetChangeCount: () => {
       changed.clear();
-      set({ changedFields: [], changedCount: 0 });
+      set({ changedFields: [], changedCount: 0, partialChanged: {} });
     },
 
     setInitialValues: (newInitialValues) =>
       set({ initialValues: newInitialValues }),
 
     setValue: (path, value, options) => {
-      const currentValues = get().values;
+      const state = get();
+      const currentValues = state.values;
       const newValues = setNested(currentValues, path, value);
-      const oldValue = getNested(get().initialValues, path);
+
+      const oldValue = getNested(state.initialValues, path);
+      const hasChanged = value !== oldValue;
 
       history.push(currentValues);
       future.length = 0;
 
-      if (value !== oldValue) changed.add(path);
-      else changed.delete(path);
+      let newPartial = state.partialChanged;
+
+      if (hasChanged) {
+        changed.add(path);
+        newPartial = setNested(newPartial, path, value);
+      } else {
+        changed.delete(path);
+        newPartial = deleteNested(newPartial, path);
+      }
 
       set({
         values: newValues,
+        partialChanged: newPartial,
         canBack: history.length > 0,
         canForward: false,
         changedFields: Array.from(changed),
         changedCount: changed.size,
       });
-      if (options?.validate == false) return;
+
+      if (options?.validate === false) return;
+
       const rule = flatRules[path];
       if (!rule) return;
+
       Promise.resolve(runRule(rule, value, newValues)).then((error) => {
         if (error)
           set((s) => ({ errors: setNested(s.errors, path, error) }));
@@ -232,6 +250,7 @@ export function createFormStore<T>(
       set({
         values: initialValues,
         errors: {},
+        partialChanged: {},
         canBack: false,
         canForward: false,
         changedFields: [],
@@ -245,16 +264,21 @@ export function createFormStore<T>(
       const prev = history.pop()!;
       future.push(get().values);
 
-      changed.clear();
       const initial = get().initialValues;
+      let partial: Partial<T> = {};
+      changed.clear();
 
-      for (const key in prev) {
-        if (JSON.stringify(prev[key]) !== JSON.stringify(initial[key]))
-          changed.add(key);
+      for (const path of Object.keys(flatRules)) {
+        const val = getNested(prev, path);
+        if (val !== getNested(initial, path)) {
+          changed.add(path);
+          partial = setNested(partial, path, val);
+        }
       }
 
       set({
         values: prev,
+        partialChanged: partial,
         canBack: history.length > 0,
         canForward: true,
         changedFields: Array.from(changed),
@@ -268,16 +292,21 @@ export function createFormStore<T>(
       const next = future.pop()!;
       history.push(get().values);
 
-      changed.clear();
       const initial = get().initialValues;
+      let partial: Partial<T> = {};
+      changed.clear();
 
-      for (const key in next) {
-        if (JSON.stringify(next[key]) !== JSON.stringify(initial[key]))
-          changed.add(key);
+      for (const path of Object.keys(flatRules)) {
+        const val = getNested(next, path);
+        if (val !== getNested(initial, path)) {
+          changed.add(path);
+          partial = setNested(partial, path, val);
+        }
       }
 
       set({
         values: next,
+        partialChanged: partial,
         canBack: true,
         canForward: future.length > 0,
         changedFields: Array.from(changed),

@@ -1,9 +1,10 @@
-import { createSkill, DirkProvider, ModalProvider, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
+import { createSkill, DirkProvider, InputContainer, ModalProvider, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 import { useFastTravel } from "./useFastTravel";
 import { Image, Text } from "@mantine/core";
 import Grid from "./Grid";
+import { Flex } from "@mantine/core";
 
 
 export const {skill: drugSkill, useSkill: useDrugSkill} = createSkill({
@@ -36,7 +37,7 @@ const App: React.FC = () => {
             direction="column"
             w='115vh'
             h='65vh'
-            bg='rgba(0,0,0,0.7)'
+            bg='rgba(0,0,0,0.9)'
             pos='absolute'
             left='50%'
             top='50%'
@@ -46,7 +47,7 @@ const App: React.FC = () => {
             }}
             align="center"
           >
-            {nextLevelXP}
+            {/* {nextLevelXP} */}
             <Title 
               p='sm'
               icon='car'
@@ -57,7 +58,15 @@ const App: React.FC = () => {
                 <Text>hi</Text>
               }
             />
-            <Grid />
+            {/* <Grid /> */}
+            <Flex
+              w='100%'
+              p='sm'
+            >
+              <InputContainer>
+              Hi world
+            </InputContainer>
+            </Flex>
           </MotionFlex>
         )}
       </AnimatePresence>

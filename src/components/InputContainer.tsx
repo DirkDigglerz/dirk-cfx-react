@@ -29,7 +29,7 @@ export function InputContainer(props: InputContainerProps){
       gap={props.title ? 'xs' : 0}
       
 
-      bg={props.bg || colorWithAlpha('var(--mantine-color-dark-9)', 0.65)}
+      bg={props.bg || alpha(theme.colors.dark[9], 0.65)}
       p={props.p || 'sm'}
       style={{
         borderRadius: theme.radius.xs,

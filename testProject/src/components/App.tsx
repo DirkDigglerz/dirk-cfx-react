@@ -1,10 +1,9 @@
-import { createSkill, DirkProvider, InputContainer, ModalProvider, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Flex, MultiSelect, NumberInput, Text, TextInput } from "@mantine/core";
+import { createSkill, DirkProvider, InputContainer, MotionFlex, Title, TornEdgeSVGFilter, useNuiEvent, useSettings, useTornEdges } from "dirk-cfx-react";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 import { useFastTravel } from "./useFastTravel";
-import { Image, Text } from "@mantine/core";
-import Grid from "./Grid";
-import { Flex } from "@mantine/core";
 
 
 export const {skill: drugSkill, useSkill: useDrugSkill} = createSkill({
@@ -63,8 +62,38 @@ const App: React.FC = () => {
               w='100%'
               p='sm'
             >
-              <InputContainer>
-              Hi world
+            <InputContainer
+              title='test'
+            >
+              <TextInput  
+                placeholder="Test Input"
+                label="Test Label"
+                description="This is a description for the input field."
+                variant="filled"
+                w='100%'
+                leftSection={
+                  <FontAwesomeIcon icon="user" />
+                }
+              />
+              <NumberInput  
+                placeholder="Test Number Input"
+                label="Test Number Label"
+                description="This is a description for the number input field."
+                variant="filled"
+
+                w='100%'
+              />
+              <MultiSelect
+                label="Test MultiSelect Label"
+                description="This is a description for the multi select field."
+                data={['Option 1', 'Option 2', 'Option 3']}
+                placeholder="Test MultiSelect"
+                variant="filled"
+                defaultValue={['Option 1']}
+              />
+              <Button>
+                Test Button
+              </Button>
             </InputContainer>
             </Flex>
           </MotionFlex>

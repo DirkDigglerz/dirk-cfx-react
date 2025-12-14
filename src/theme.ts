@@ -1,4 +1,4 @@
-import { createTheme, MantineTheme, NumberInput } from "@mantine/core";
+import { ColorInput, createTheme, MantineTheme, MultiSelect, NumberInput, TextInput } from "@mantine/core";
 
 export const label = {
   fontSize: 'var(--mantine-font-size-xs)',
@@ -9,6 +9,22 @@ export const label = {
 export const error = {
   fontSize: 'var(--mantine-font-size-xs)',
   fontFamily: 'Akrobat Regular',
+};
+export const description = {
+  fontSize: 'var(--mantine-font-size-xs)',
+};
+
+export const genericInputStyles = {
+  styles: {
+    label: label,
+    error: error,
+    description: description,
+    
+    input:{
+      backgroundColor: 'rgba(76, 76, 76, 0.3)', 
+      minHeight: '4vh',
+    },
+  },
 };
 
 const theme = createTheme({
@@ -63,37 +79,24 @@ const theme = createTheme({
           fontFamily: 'Akrobat Bold',
           letterSpacing: '0.05em',
           textTransform: 'uppercase', 
-          
         },
+
         root:{
           backgroundColor: 'rgba(77, 77, 77, 0.4)',
         },
         
       }
     },
-    Textarea: {
-      styles:{
-        label: label,
-        error: error,
-      },
-    },
-
-    Button:{
-      styles:{
-        root:{
-          fontSize: 'var(--mantine-font-size-xs)',
-        },
-      },
-    },
-
-    Select:{
-      styles:{
-        label: label,
-        input:{
-          padding: 'var(--mantine-spacing-sm)',
-        },
-      }
-    },
+    
+    
+    Input:  genericInputStyles,
+    TextInput: genericInputStyles,
+    NumberInput: genericInputStyles,
+    Select: genericInputStyles,
+    MultiSelect:  genericInputStyles, 
+    Textarea: genericInputStyles,
+    ColorInput: genericInputStyles,
+    DateInput: genericInputStyles,
 
     Pill: {
       styles: (theme: MantineTheme) => ({
@@ -106,61 +109,14 @@ const theme = createTheme({
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           fontFamily: 'Akrobat Bold',
-          fontSize: theme.fontSizes.xs,
+          fontSize: '1.25vh',
           borderRadius: theme.defaultRadius,
-          padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+          paddingBottom: '0.5vh',
+          paddingTop: '0.5vh',
         }
       })
     },
 
-    Input:{
-      styles: {
-        label: label,
-        error: error,
-
-        input:{
-          padding: 'var(--mantine-spacing-sm)',
-          backgroundColor: 'rgba(76, 76, 76, 0.3)', 
-        },
-      },
-    },
-    ColorInput:{
-      styles: {
-        label: label,
-        input:{
-          padding: 'var(--mantine-spacing-sm)',
-        },
-      },
-    },
-    TextInput:{
-      styles:{
-        label: label,
-        wrapper:{
-        
-        },
-        section:{
-          marginRight: '0.2vh',
-        },
-
-        input:{
-          padding: 'var(--mantine-spacing-sm)',
-          
-          
-        },
-      }
-    },
-    NumberInput:{
-      
-      styles:{
-        label: label,
-        input:{
-          padding: 'var(--mantine-spacing-sm)',
-        },
-        section:{
-          pointerEvents: 'all',
-        },
-      }
-    }
   },
 
   colors: {

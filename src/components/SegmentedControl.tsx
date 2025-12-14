@@ -108,7 +108,7 @@ function Segment(props: SegmentProps & {
       align="center"
       // p='xs'
       h='100%'
-      bg={props.selected ? props.color ? alpha(props.color, 0.2) : colorWithAlpha(theme.colors[theme.primaryColor][theme.primaryShade as number], 0.2) : 'transparent'}
+      bg={props.selected ? props.color ? colorWithAlpha(props.color, 0.2) : colorWithAlpha(theme.colors[theme.primaryColor][theme.primaryShade as number], 0.2) : 'transparent'}
       pos="relative"
       style={{
         // position: "relative",

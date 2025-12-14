@@ -30,7 +30,6 @@ export type DirkProviderProps = {
 
 export function DirkProvider({ children, themeOverride }: DirkProviderProps) {
   const {
-    hydrated,
     primaryColor,
     primaryShade,
     customTheme,
@@ -38,7 +37,6 @@ export function DirkProvider({ children, themeOverride }: DirkProviderProps) {
   } = useSettings();
 
   // 🚫 do not render until state is stable
-  // if (!hydrated) return null;
 
   const mergedTheme = useMemo(
     () =>

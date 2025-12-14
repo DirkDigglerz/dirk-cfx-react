@@ -3,7 +3,6 @@ import { registerInitialFetch } from "./fetchNui";
 import { MantineColorsTuple } from "@mantine/core";
 
 export type SettingsState = {
-  hydrated: boolean;
   game: "fivem" | "rdr3";
   primaryColor: string;
   primaryShade: number;
@@ -12,7 +11,6 @@ export type SettingsState = {
 };
 
 export const useSettings = create<SettingsState>(() => ({
-  hydrated: false,
   game: "fivem",
   primaryColor: "dirk",
   primaryShade: 9,
@@ -36,9 +34,7 @@ registerInitialFetch<Partial<SettingsState>>("GET_SETTINGS")
   .then((data) => {
     useSettings.setState({
       ...data,
-      hydrated: true,
     });
-  })
-  .catch(() => {
-    useSettings.setState({ hydrated: true });
+  }).catch((err) => {
+    console.error("Failed to fetch initial settings within dirk-cfx-react:", err);
   });

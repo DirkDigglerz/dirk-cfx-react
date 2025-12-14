@@ -1,6 +1,7 @@
 import { useMantineTheme, Flex, Text, alpha } from "@mantine/core";
 import { MotionFlex } from "./Motion";
 import { Variants } from "framer-motion";
+import { colorWithAlpha } from "@/utils";
 
 export type InputContainerProps = {
   title?:string;
@@ -28,7 +29,7 @@ export function InputContainer(props: InputContainerProps){
       gap={props.title ? 'xs' : 0}
       
 
-      bg={props.bg || alpha('var(--mantine-color-dark-9)', 0.65)}
+      bg={props.bg || colorWithAlpha('var(--mantine-color-dark-9)', 0.65)}
       p={props.p || 'sm'}
       style={{
         borderRadius: theme.radius.xs,

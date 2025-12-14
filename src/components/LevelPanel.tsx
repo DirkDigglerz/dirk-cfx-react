@@ -1,4 +1,4 @@
-import { locale } from "@/utils";
+import { colorWithAlpha, locale } from "@/utils";
 import { Flex, RingProgress, Text, alpha, useMantineTheme } from "@mantine/core";
 
 export function LevelPanel(props: {
@@ -33,7 +33,7 @@ export function LevelPanel(props: {
         size={190}
         roundCaps
         thickness={10}
-        sections={[{ value: props.progressToLevel, color:alpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.9) }]}
+        sections={[{ value: props.progressToLevel, color:colorWithAlpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.9) }]}
         label={
           <Flex
             justify={'center'}
@@ -42,10 +42,10 @@ export function LevelPanel(props: {
           >
             <Text
               size='6vh'
-              c={alpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.9)}
+              c={colorWithAlpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.9)}
               style={{
                 fontFamily: 'Akrobat Black',
-                textShadow: `0 0 10px ${alpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.7)}`,  
+                textShadow: `0 0 10px ${colorWithAlpha(props.color || theme.colors[theme.primaryColor][theme.primaryShade as number], 0.7)}`,  
               }}
             >
               {props.level}

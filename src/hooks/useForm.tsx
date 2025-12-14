@@ -3,7 +3,10 @@
 import React, { createContext, useContext, useRef } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 
-// ---- Utility functions ----
+/* ======================================================
+   Utilities
+====================================================== */
+
 function getNested(obj: any, path: string): any {
   return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
 }
@@ -12,11 +15,13 @@ function setNested(obj: any, path: string, value: any): any {
   const keys = path.split(".");
   const newObj = { ...obj };
   let current = newObj;
+
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
     current[key] = { ...(current[key] || {}) };
     current = current[key];
   }
+
   current[keys[keys.length - 1]] = value;
   return newObj;
 }
@@ -25,12 +30,14 @@ function deleteNested(obj: any, path: string): any {
   const keys = path.split(".");
   const newObj = { ...obj };
   let current = newObj;
+
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
     if (!current[key]) return obj;
     current[key] = { ...current[key] };
     current = current[key];
   }
+
   delete current[keys[keys.length - 1]];
   return newObj;
 }
@@ -38,23 +45,42 @@ function deleteNested(obj: any, path: string): any {
 function flattenRules(
   rules: any,
   prefix = ""
-): Record<string, (value: any, values: any) => string | null> {
-  const result: Record<string, (value: any, values: any) => string | null> = {};
+): Record<string, ValidatorFn> {
+  const result: Record<string, ValidatorFn> = {};
+
   for (const key in rules) {
     const fullPath = prefix ? `${prefix}.${key}` : key;
     const val = rules[key];
+
     if (typeof val === "function") result[fullPath] = val;
     else if (typeof val === "object")
       Object.assign(result, flattenRules(val, fullPath));
   }
+
   return result;
 }
 
-// ---- Types ----
+async function runRule(
+  rule: ValidatorFn,
+  value: any,
+  values: any
+): Promise<string | null> {
+  const result = rule(value, values);
+  return result instanceof Promise ? await result : result;
+}
+
+/* ======================================================
+   Types
+====================================================== */
+
+export type ValidatorFn<T = any> =
+  | ((value: any, values: Partial<T>) => string | null)
+  | ((value: any, values: Partial<T>) => Promise<string | null>);
+
 export type ValidationRules<T> = {
   [K in keyof T]?: T[K] extends object
     ? ValidationRules<T[K]>
-    : (value: T[K], values: Partial<T>) => string | null;
+    : ValidatorFn<T>;
 };
 
 export type FormState<T> = {
@@ -64,10 +90,13 @@ export type FormState<T> = {
 
   setValue: (path: string, value: any) => void;
   setInitialValues: (newInitialValues: Partial<T>) => void;
+
   setError: (path: string, message: string) => void;
   clearError: (path: string) => void;
-  validate: () => boolean;
-  validateField: (path: string) => boolean;
+
+  validate: () => Promise<boolean>;
+  validateField: (path: string) => Promise<boolean>;
+
   reset: () => void;
 
   back: () => void;
@@ -79,12 +108,14 @@ export type FormState<T> = {
   changedCount: number;
   resetChangeCount: () => void;
 
-  /** New additions **/
   onSubmit?: (form: FormState<T>) => void;
-  submit: () => void;
+  submit: () => Promise<void>;
 };
 
-// ---- Core Store ----
+/* ======================================================
+   Store
+====================================================== */
+
 export function createFormStore<T>(
   initialValues: Partial<T>,
   validationRules?: ValidationRules<T>,
@@ -104,18 +135,18 @@ export function createFormStore<T>(
     changedFields: [],
     changedCount: 0,
     onSubmit,
-    submit: () => {
+
+    submit: async () => {
       const state = get();
-      const isValid = state.validate();
-      if (isValid && state.onSubmit) state.onSubmit(get());
+      const isValid = await state.validate();
+      if (isValid && state.onSubmit) {
+        state.onSubmit(get());
+      }
     },
 
     resetChangeCount: () => {
       changed.clear();
-      set(() => ({
-        changedFields: [],
-        changedCount: 0,
-      }));
+      set({ changedFields: [], changedCount: 0 });
     },
 
     setInitialValues: (newInitialValues) =>
@@ -141,36 +172,40 @@ export function createFormStore<T>(
       });
 
       const rule = flatRules[path];
-      if (rule) {
-        const error = rule(value, newValues);
+      if (!rule) return;
+
+      Promise.resolve(runRule(rule, value, newValues)).then((error) => {
         if (error)
-          set((state) => ({ errors: setNested(state.errors, path, error) }));
-        else set((state) => ({ errors: deleteNested(state.errors, path) }));
-      }
+          set((s) => ({ errors: setNested(s.errors, path, error) }));
+        else
+          set((s) => ({ errors: deleteNested(s.errors, path) }));
+      });
     },
 
     setError: (path, message) =>
-      set((state) => ({ errors: setNested(state.errors, path, message) })),
-    clearError: (path) =>
-      set((state) => ({ errors: deleteNested(state.errors, path) })),
+      set((s) => ({ errors: setNested(s.errors, path, message) })),
 
-    validateField: (path) => {
+    clearError: (path) =>
+      set((s) => ({ errors: deleteNested(s.errors, path) })),
+
+    validateField: async (path) => {
       const state = get();
       const rule = flatRules[path];
       if (!rule) return true;
 
       const value = getNested(state.values, path);
-      const error = rule(value, state.values);
+      const error = await runRule(rule, value, state.values);
+
       if (error) {
-        set((state) => ({ errors: setNested(state.errors, path, error) }));
+        set((s) => ({ errors: setNested(s.errors, path, error) }));
         return false;
-      } else {
-        set((state) => ({ errors: deleteNested(state.errors, path) }));
-        return true;
       }
+
+      set((s) => ({ errors: deleteNested(s.errors, path) }));
+      return true;
     },
 
-    validate: () => {
+    validate: async () => {
       const state = get();
       let isValid = true;
       let newErrors: Record<string, string> = {};
@@ -178,7 +213,8 @@ export function createFormStore<T>(
       for (const path in flatRules) {
         const rule = flatRules[path];
         const value = getNested(state.values, path);
-        const error = rule(value, state.values);
+        const error = await runRule(rule, value, state.values);
+
         if (error) {
           isValid = false;
           newErrors = setNested(newErrors, path, error);
@@ -193,6 +229,7 @@ export function createFormStore<T>(
       history.length = 0;
       future.length = 0;
       changed.clear();
+
       set({
         values: initialValues,
         errors: {},
@@ -204,16 +241,16 @@ export function createFormStore<T>(
     },
 
     back: () => {
-      const state = get();
-      if (history.length === 0) return;
+      if (!history.length) return;
+
       const prev = history.pop()!;
-      future.push(state.values);
+      future.push(get().values);
 
       changed.clear();
-      const current = prev;
       const initial = get().initialValues;
-      for (const key in current) {
-        if (JSON.stringify(current[key]) !== JSON.stringify(initial[key]))
+
+      for (const key in prev) {
+        if (JSON.stringify(prev[key]) !== JSON.stringify(initial[key]))
           changed.add(key);
       }
 
@@ -227,16 +264,16 @@ export function createFormStore<T>(
     },
 
     forward: () => {
-      const state = get();
-      if (future.length === 0) return;
+      if (!future.length) return;
+
       const next = future.pop()!;
-      history.push(state.values);
+      history.push(get().values);
 
       changed.clear();
-      const current = next;
       const initial = get().initialValues;
-      for (const key in current) {
-        if (JSON.stringify(current[key]) !== JSON.stringify(initial[key]))
+
+      for (const key in next) {
+        if (JSON.stringify(next[key]) !== JSON.stringify(initial[key]))
           changed.add(key);
       }
 
@@ -251,7 +288,10 @@ export function createFormStore<T>(
   }));
 }
 
-// ---- Context ----
+/* ======================================================
+   Context + Hook
+====================================================== */
+
 const FormContext = createContext<StoreApi<FormState<any>> | null>(null);
 
 export function FormProvider<T>({
@@ -265,7 +305,10 @@ export function FormProvider<T>({
   onSubmit?: (form: FormState<T>) => void;
   children: React.ReactNode;
 }) {
-  const storeRef = useRef(createFormStore<T>(initialValues, validate, onSubmit));
+  const storeRef = useRef(
+    createFormStore<T>(initialValues, validate, onSubmit)
+  );
+
   return (
     <FormContext.Provider value={storeRef.current}>
       {children}
@@ -273,9 +316,10 @@ export function FormProvider<T>({
   );
 }
 
-// ---- Hook ----
 export function useForm<T>() {
   const store = useContext(FormContext);
-  if (!store) throw new Error("useForm must be used inside a <FormProvider>");
+  if (!store) {
+    throw new Error("useForm must be used inside <FormProvider>");
+  }
   return useStore(store) as FormState<T>;
 }

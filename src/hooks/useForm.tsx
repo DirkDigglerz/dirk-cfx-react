@@ -88,7 +88,7 @@ export type FormState<T> = {
   initialValues: Partial<T>;
   errors: Record<string, string>;
 
-  setValue: (path: string, value: any) => void;
+  setValue: (path: string, value: any, options?: { validate?: boolean }) => void;
   setInitialValues: (newInitialValues: Partial<T>) => void;
 
   setError: (path: string, message: string) => void;
@@ -152,7 +152,7 @@ export function createFormStore<T>(
     setInitialValues: (newInitialValues) =>
       set({ initialValues: newInitialValues }),
 
-    setValue: (path, value) => {
+    setValue: (path, value, options) => {
       const currentValues = get().values;
       const newValues = setNested(currentValues, path, value);
       const oldValue = getNested(get().initialValues, path);
@@ -170,10 +170,9 @@ export function createFormStore<T>(
         changedFields: Array.from(changed),
         changedCount: changed.size,
       });
-
+      if (options?.validate == false) return;
       const rule = flatRules[path];
       if (!rule) return;
-
       Promise.resolve(runRule(rule, value, newValues)).then((error) => {
         if (error)
           set((s) => ({ errors: setNested(s.errors, path, error) }));

@@ -186,7 +186,7 @@ export function createFormStore<T>(
         changedCount: changed.size,
       });
 
-      if (options?.validate === false) return;
+      if (!options?.validate) return;
 
       const rule = flatRules[path];
       if (!rule) return;

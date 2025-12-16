@@ -171,25 +171,20 @@ export function createFormStore<T>(
 
     setInitialValues: (newInitialValues) =>
       set({ initialValues: newInitialValues }),
-    
+
     setValue: (path, value, options) => {
       const state = get();
-      
-      // 1. Early exit if value hasn't changed
-      const currentValue = getNested(state.values, path);
-      if (currentValue === value) return;
-      
       const currentValues = state.values;
       const newValues = setNested(currentValues, path, value);
+
       const oldValue = getNested(state.initialValues, path);
       const hasChanged = value !== oldValue;
 
-      // 2. Batch history operations
       history.push(currentValues);
       future.length = 0;
 
-      // 3. Optimize change tracking with single pass
       let newPartial = state.partialChanged;
+
       if (hasChanged) {
         changed.add(path);
         newPartial = setNested(newPartial, path, value);
@@ -198,37 +193,25 @@ export function createFormStore<T>(
         newPartial = deleteNested(newPartial, path);
       }
 
-      // 4. Create cached arrays only when size changes
-      const newSize = changed.size;
-      const changedFields = newSize !== state.changedCount 
-        ? Array.from(changed)
-        : state.changedFields;
-
-      // 5. Single state update
       set({
         values: newValues,
         partialChanged: newPartial,
         canBack: history.length > 0,
         canForward: false,
-        changedFields,
-        changedCount: newSize,
+        changedFields: Array.from(changed),
+        changedCount: changed.size,
       });
 
-      // 6. Async validation without blocking
       if (!options?.validate) return;
-      
+
       const rule = flatRules[path];
       if (!rule) return;
 
-      // Use queueMicrotask for better performance than Promise.resolve
-      queueMicrotask(() => {
-        runRule(rule, value, newValues).then((error) => {
-          if (error) {
-            set((s) => ({ errors: setNested(s.errors, path, error) }));
-          } else {
-            set((s) => ({ errors: deleteNested(s.errors, path) }));
-          }
-        });
+      Promise.resolve(runRule(rule, value, newValues)).then((error) => {
+        if (error)
+          set((s) => ({ errors: setNested(s.errors, path, error) }));
+        else
+          set((s) => ({ errors: deleteNested(s.errors, path) }));
       });
     },
 
@@ -383,4 +366,33 @@ export function useForm<T>() {
     throw new Error("useForm must be used inside <FormProvider>");
   }
   return useStore(store) as FormState<T>;
+}
+
+export function useFormField<T>(path: string) {
+  const store = useContext(FormContext);
+  if (!store) {
+    throw new Error("useFormField must be used inside <FormProvider>");
+  }
+  return useStore(store, (s) => getNested(s.values, path));
+}
+
+export function useFormActions<T>() {
+  const store = useContext(FormContext);
+  if (!store) {
+    throw new Error("useFormActions must be used inside <FormProvider>");
+  }
+  return store.getState() as Pick<
+    FormState<T>,
+    | "setValue"
+    | "setError"
+    | "clearError"
+    | "validate"
+    | "validateField"
+    | "reset"
+    | "back"
+    | "forward"
+    | "canBack"
+    | "canForward"
+    | "submit"
+  >;
 }

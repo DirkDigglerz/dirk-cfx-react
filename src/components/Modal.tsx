@@ -1,11 +1,11 @@
 
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Flex, Text, useMantineTheme } from "@mantine/core";
+import { alpha, Flex, Text, useMantineTheme } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { AnimatePresence } from "framer-motion";
-import { MotionFlex, MotionIcon } from "./Motion";
 import { useModal, useModalActions } from "./ModalStore";
+import { MotionFlex, MotionIcon } from "./Motion";
 
 export default function Modal(){
   const active = useModal((state) => state.active);
@@ -55,7 +55,7 @@ export default function Modal(){
               boxShadow: theme.shadows.xl,
               zIndex: 2100,
             }}
-            bg={'rgba(48, 48, 48, 0.84)'}
+            bg={alpha(theme.colors.dark[9], 0.9)}
           
             initial={{ scale: 0.8, opacity: 0, transform: 'translate(-50%, -50%)' }}
             animate={{ scale: 1, opacity: 1, transform: 'translate(-50%, -50%)' }}

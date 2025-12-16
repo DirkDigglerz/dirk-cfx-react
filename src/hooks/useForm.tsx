@@ -91,6 +91,12 @@ export type FormState<T> = {
   /** NEW */
   partialChanged: Partial<T>;
 
+  getInputProps: (path: string) => {
+    value: any;
+    error?: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  };
+
   setValue: (path: string, value: any, options?: { validate?: boolean }) => void;
   setInitialValues: (newInitialValues: Partial<T>) => void;
 
@@ -148,6 +154,16 @@ export function createFormStore<T>(
       }
     },
 
+    getInputProps: (path: string) => {
+      return {
+        value: getNested(get().values, path) ?? "",
+        error: get().errors[path],
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+          get().setValue(path, e.target.value, { validate: true });
+        },
+      };
+    },
+
     resetChangeCount: () => {
       changed.clear();
       set({ changedFields: [], changedCount: 0, partialChanged: {} });
@@ -155,20 +171,25 @@ export function createFormStore<T>(
 
     setInitialValues: (newInitialValues) =>
       set({ initialValues: newInitialValues }),
-
+    
     setValue: (path, value, options) => {
       const state = get();
+      
+      // 1. Early exit if value hasn't changed
+      const currentValue = getNested(state.values, path);
+      if (currentValue === value) return;
+      
       const currentValues = state.values;
       const newValues = setNested(currentValues, path, value);
-
       const oldValue = getNested(state.initialValues, path);
       const hasChanged = value !== oldValue;
 
+      // 2. Batch history operations
       history.push(currentValues);
       future.length = 0;
 
+      // 3. Optimize change tracking with single pass
       let newPartial = state.partialChanged;
-
       if (hasChanged) {
         changed.add(path);
         newPartial = setNested(newPartial, path, value);
@@ -177,25 +198,37 @@ export function createFormStore<T>(
         newPartial = deleteNested(newPartial, path);
       }
 
+      // 4. Create cached arrays only when size changes
+      const newSize = changed.size;
+      const changedFields = newSize !== state.changedCount 
+        ? Array.from(changed)
+        : state.changedFields;
+
+      // 5. Single state update
       set({
         values: newValues,
         partialChanged: newPartial,
         canBack: history.length > 0,
         canForward: false,
-        changedFields: Array.from(changed),
-        changedCount: changed.size,
+        changedFields,
+        changedCount: newSize,
       });
 
+      // 6. Async validation without blocking
       if (!options?.validate) return;
-
+      
       const rule = flatRules[path];
       if (!rule) return;
 
-      Promise.resolve(runRule(rule, value, newValues)).then((error) => {
-        if (error)
-          set((s) => ({ errors: setNested(s.errors, path, error) }));
-        else
-          set((s) => ({ errors: deleteNested(s.errors, path) }));
+      // Use queueMicrotask for better performance than Promise.resolve
+      queueMicrotask(() => {
+        runRule(rule, value, newValues).then((error) => {
+          if (error) {
+            set((s) => ({ errors: setNested(s.errors, path, error) }));
+          } else {
+            set((s) => ({ errors: deleteNested(s.errors, path) }));
+          }
+        });
       });
     },
 

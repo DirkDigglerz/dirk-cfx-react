@@ -428,6 +428,20 @@ export function useFormError(path: string) {
   return useStore(store, (s) => s.errors[path]);
 }
 
+export function useFormErrors(...paths: string[]) {
+  const store = useContext(FormContext);
+  if (!store) {
+    throw new Error("useFormErrors must be used inside <FormProvider>");
+  }
+  return useStore(store, (s) => {
+    const result: Record<string, string | undefined> = {};
+    for (const path of paths) {
+      result[path] = s.errors[path];
+    }
+    return result;
+  });
+}
+
 export function useFormActions<T>() {
   const store = useContext(FormContext);
   if (!store) {

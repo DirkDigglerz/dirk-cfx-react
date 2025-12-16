@@ -19,11 +19,15 @@ type Paths<T> = T extends object
   ? {
       [K in keyof T]: K extends string
         ? T[K] extends object
-          ? K | `${K}.${Paths<T[K]>}`
+          ? T[K] extends any[] | Date | Function
+            ? K
+            : K | `${K}.${Paths<T[K]>}`
           : K
         : never;
     }[keyof T]
   : never;
+
+type LoosePaths<T> = Paths<T> | (string & {});
 
 /* ======================================================
    Utilities
@@ -389,28 +393,28 @@ export function useForm<T>() {
   return useStore(store) as FormState<T>;
 }
 
-export function useFormField<T, P extends Paths<T>>(
+export function useFormField<T, P extends LoosePaths<T> = LoosePaths<T>>(
   path: P
-): PathValue<T, P> | undefined {
+): P extends Paths<T> ? PathValue<T, P> | undefined : any {
   const store = useContext(FormContext);
   if (!store) {
     throw new Error("useFormField must be used inside <FormProvider>");
   }
-  return useStore(store, (s) => getNested(s.values, path)) as PathValue<T, P> | undefined;
+  return useStore(store, (s) => getNested(s.values, path));
 }
 
-export function useFormFields<T, P extends Paths<T>>(
+export function useFormFields<T, P extends LoosePaths<T> = LoosePaths<T>>(
   ...paths: P[]
-): { [K in P]: PathValue<T, K> | undefined } {
+): { [K in P]: K extends Paths<T> ? PathValue<T, K> | undefined : any } {
   const store = useContext(FormContext);
   if (!store) {
     throw new Error("useFormFields must be used inside <FormProvider>");
   }
   
   return useStore(store, (s) => {
-    const result = {} as { [K in P]: PathValue<T, K> | undefined };
+    const result = {} as { [K in P]: K extends Paths<T> ? PathValue<T, K> | undefined : any };
     for (const path of paths) {
-      result[path] = getNested(s.values, path) as PathValue<T, typeof path> | undefined;
+      result[path] = getNested(s.values, path);
     }
     return result;
   });

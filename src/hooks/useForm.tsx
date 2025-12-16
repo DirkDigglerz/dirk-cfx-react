@@ -4,6 +4,28 @@ import React, { createContext, useContext, useRef } from "react";
 import { createStore, StoreApi, useStore } from "zustand";
 
 /* ======================================================
+   Type Utilities
+====================================================== */
+
+type PathValue<T, P extends string> = P extends keyof T
+  ? T[P]
+  : P extends `${infer K}.${infer R}`
+  ? K extends keyof T
+    ? PathValue<T[K], R>
+    : never
+  : never;
+
+type Paths<T> = T extends object
+  ? {
+      [K in keyof T]: K extends string
+        ? T[K] extends object
+          ? K | `${K}.${Paths<T[K]>}`
+          : K
+        : never;
+    }[keyof T]
+  : never;
+
+/* ======================================================
    Utilities
 ====================================================== */
 
@@ -88,7 +110,6 @@ export type FormState<T> = {
   initialValues: Partial<T>;
   errors: Record<string, string>;
 
-  /** NEW */
   partialChanged: Partial<T>;
 
   getInputProps: (path: string) => {
@@ -368,12 +389,39 @@ export function useForm<T>() {
   return useStore(store) as FormState<T>;
 }
 
-export function useFormField<T>(path: string) {
+export function useFormField<T, P extends Paths<T>>(
+  path: P
+): PathValue<T, P> | undefined {
   const store = useContext(FormContext);
   if (!store) {
     throw new Error("useFormField must be used inside <FormProvider>");
   }
-  return useStore(store, (s) => getNested(s.values, path));
+  return useStore(store, (s) => getNested(s.values, path)) as PathValue<T, P> | undefined;
+}
+
+export function useFormFields<T, P extends Paths<T>>(
+  ...paths: P[]
+): { [K in P]: PathValue<T, K> | undefined } {
+  const store = useContext(FormContext);
+  if (!store) {
+    throw new Error("useFormFields must be used inside <FormProvider>");
+  }
+  
+  return useStore(store, (s) => {
+    const result = {} as { [K in P]: PathValue<T, K> | undefined };
+    for (const path of paths) {
+      result[path] = getNested(s.values, path) as PathValue<T, typeof path> | undefined;
+    }
+    return result;
+  });
+}
+
+export function useFormError(path: string) {
+  const store = useContext(FormContext);
+  if (!store) {
+    throw new Error("useFormError must be used inside <FormProvider>");
+  }
+  return useStore(store, (s) => s.errors[path]);
 }
 
 export function useFormActions<T>() {

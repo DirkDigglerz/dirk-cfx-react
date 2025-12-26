@@ -33,7 +33,7 @@ export function Title(props: TitleProps) {
       gap='xs'
       w={props.w || '100%'}
       p={props.p || 'unset'}
-      pb={!props.p ? 'xs' : props.p}
+      pb={!props.p ? 'sm' : props.p}
       // bg='red'
       style={{
         userSelect: 'none',

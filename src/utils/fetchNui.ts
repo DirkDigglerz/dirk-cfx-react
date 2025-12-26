@@ -81,3 +81,14 @@ export const useAutoFetcher = () => {
     run();
   }, []);
 };
+
+
+export const fetchLuaTable = <T>(tableName: string, mockData?: T): Promise<T> => {  
+  return fetchNui<T>('FETCH_LUA_TABLE', { tableName }, mockData);
+} 
+
+export const registerInitialLuaTableFetch = <T>(tableName: string, mockData?: T): Promise<T> => { 
+  return registerInitialFetch<T>('FETCH_LUA_TABLE', { tableName }, mockData);
+} 
+
+

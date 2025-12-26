@@ -32,10 +32,12 @@ export function Title(props: TitleProps) {
       bg={props.bg || 'transparent'}
       gap='xs'
       w={props.w || '100%'}
-      p={props.p || '0'}
+      p={props.p || 'unset'}
+      pb={!props.p ? 'xs' : props.p}
+      // bg='red'
       style={{
         userSelect: 'none',
-        borderBottom: props.removeBorder ? 'none' : `0.2vh solid ${props.borderColor || colorWithAlpha(theme.colors[theme.primaryColor][9], 0.5)}`
+        borderBottom: props.removeBorder ? 'none' : `0.3vh solid ${props.borderColor || colorWithAlpha(theme.colors[theme.primaryColor][9], 0.5)}`
       }}
     >
       <Flex

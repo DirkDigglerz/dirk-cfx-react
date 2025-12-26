@@ -95,6 +95,11 @@ const App: React.FC = () => {
                   defaultValue={['Option 1']}
                 />
                 <TestButton />
+                <Title
+                  icon="plane"
+                  title="Fast Travel Title"
+                  description="Description for fast travel title."
+                />
               </InputContainer>
               </Flex>
             </MotionFlex>

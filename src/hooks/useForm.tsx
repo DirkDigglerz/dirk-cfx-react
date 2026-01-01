@@ -39,17 +39,30 @@ function getNested(obj: any, path: string): any {
 
 function setNested(obj: any, path: string, value: any): any {
   const keys = path.split(".");
-  const newObj = { ...obj };
-  let current = newObj;
+  const root = Array.isArray(obj) ? [...obj] : { ...obj };
+  let current = root;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
-    current[key] = { ...(current[key] || {}) };
+    const nextKey = keys[i + 1];
+    const isIndex = !isNaN(Number(nextKey));
+
+    const existing = current[key];
+
+    current[key] =
+      existing != null
+        ? Array.isArray(existing)
+          ? [...existing]
+          : { ...existing }
+        : isIndex
+        ? []
+        : {};
+
     current = current[key];
   }
 
   current[keys[keys.length - 1]] = value;
-  return newObj;
+  return root;
 }
 
 function deleteNested(obj: any, path: string): any {

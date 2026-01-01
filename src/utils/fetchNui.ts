@@ -92,3 +92,6 @@ export const registerInitialLuaTableFetch = <T>(tableName: string, mockData?: T)
 } 
 
 
+
+// useage example:
+// registerInitialLuaTableFetch<{ [key: string]: string }>('my_lua_table', { key1: 'value1', key2: 'value2' }); 

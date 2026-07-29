@@ -5,6 +5,7 @@ import "@mantine/notifications/styles.css";
 import './styles/fonts.css';
 import './styles/notify.css';
 import './styles/scrollBar.css';
+import './styles/inputs.css';
 import './styles/tornEdge.css';
 
 

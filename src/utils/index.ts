@@ -10,6 +10,8 @@ export * from "./images";
 export * from "./useSettings";
 export * from "./useItems";
 export * from "./useFrameworkGroups";
+export * from "./useModels";
+export * from "./useVehicles";
 export * from "./inputMapper";
 export * from "./extractDefaults";
 export * from "./gtaControls";

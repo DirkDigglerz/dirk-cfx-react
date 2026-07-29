@@ -14,6 +14,11 @@ export type SettingsState = {
   serverName?: string;
   logo?: string;
   language?: string;
+  // Server environment detection, populated from dirk_lib's GET_SETTINGS
+  // (lib.settings). Centralised here so any consumer/component can gate on the
+  // framework/inventory without its own fetch.
+  framework?: string;   // 'qb-core' | 'qbx_core' | 'es_extended' | ...
+  inventory?: string;   // 'ox_inventory' | 'qb-inventory' | 'codem-inventory' | ...
 };
 
 export const useSettings = create<SettingsState>(() => ({

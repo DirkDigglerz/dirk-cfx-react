@@ -10,6 +10,13 @@ export type SelectItemProps = {
   onChange: (value: string) => void;
   style?: React.CSSProperties;
   excludeItemNames?: string[];
+  /**
+   * Allow committing a typed value that isn't a registered item — for naming a
+   * brand-new/uninstalled item (e.g. seeding a new fish/equipment). The typed
+   * value is offered as a "Use …" option and, once selected, shows in the usual
+   * amber "not in inventory" state.
+   */
+  allowCustom?: boolean;
 };
 
 const MISSING_COLOR = "#f59e0b"; // amber — matches MissingItemsBanner
@@ -41,6 +48,9 @@ function LazyImage({ src, style }: { src: string; style?: React.CSSProperties })
 
 export function SelectItem(props: SelectItemProps) {
   const invItems = useItems();
+  // Observed (not controlled) search text — lets us offer a "Use <typed>" option
+  // when allowCustom is on, without taking over Mantine's display of the value.
+  const [search, setSearch] = useState("");
 
   // True when something IS configured but it's not registered in the player's
   // items table. Drives all the amber styling below.
@@ -63,11 +73,21 @@ export function SelectItem(props: SelectItemProps) {
     if (isMissing) {
       list.unshift({ value: props.value, label: props.value, image: "" });
     }
+
+    // allowCustom: if the typed search matches no existing item and isn't the
+    // current value, offer it as a creatable option. Selecting it commits the
+    // raw typed value (which then renders as "not in inventory").
+    if (props.allowCustom) {
+      const q = search.trim();
+      if (q && q !== props.value && !list.some((i) => i.value.toLowerCase() === q.toLowerCase())) {
+        list.unshift({ value: q, label: `${locale("UseCustomItem")}: ${q}`, image: "" });
+      }
+    }
     return list;
     // `useItemsList` already depends on `invItems` internally; `isMissing`
     // captures the value-vs-inventory delta so this list rebuilds whenever
     // the configured value or the items table changes.
-  }, [invItems, props.excludeItemNames, props.value, isMissing]);
+  }, [invItems, props.excludeItemNames, props.value, isMissing, props.allowCustom, search]);
 
   return (
     <Select
@@ -79,6 +99,7 @@ export function SelectItem(props: SelectItemProps) {
       limit={50}
       value={props.value}
       onChange={(v) => props.onChange(v as string)}
+      onSearchChange={props.allowCustom ? setSearch : undefined}
       data={formattedItems}
       allowDeselect={false}
       searchable

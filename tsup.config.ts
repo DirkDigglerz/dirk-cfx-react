@@ -15,7 +15,11 @@ export default defineConfig({
   },
   format: ["cjs", "esm"],
   dts: true,
-  splitting: false,
+  // Enabled so big lazy modules (e.g. src/data/modelNames.ts, dynamically
+  // imported by useModels.loadModels) split into their own ESM chunk instead
+  // of being inlined into the main bundle. CJS ignores splitting. Transparent
+  // to Vite consumers, which follow the package's own import graph.
+  splitting: true,
   sourcemap: true,
   clean: true,
   treeshake: true,

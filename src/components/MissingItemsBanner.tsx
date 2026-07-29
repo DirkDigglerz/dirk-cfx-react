@@ -5,22 +5,23 @@
 // Driven by dirk_lib's `<scriptName>:getMissingItems` callback (server-side
 // audit walks the schema's x-installItem / x-installItemList annotations,
 // cross-references `lib.inventory.item(name)`, and returns the missing names
-// + ready-to-paste install snippets per format).
+// + ready-to-paste install snippets keyed PER INVENTORY).
+//
+// The format picker is a dropdown (not a segmented control) so the growing
+// list of supported inventories never bloats the UI. It defaults to the
+// server's actual inventory (settings.inventory, from dirk_lib GET_SETTINGS).
 //
 // Auto-mounted by ConfigPanel above its tab AnimatePresence so it survives
 // tab switches without remounting. Consumers can suppress it by passing
 // `suppressMissingItemsBanner` to ConfigPanel.
-//
-// To use this in another consumer: nothing to do. ConfigPanel mounts it.
-// Just annotate the consumer's schema.json with x-installItem /
-// x-installItemList on item-name fields, and dirk_lib does the rest.
 
-import { alpha, Flex, Text, useMantineTheme } from "@mantine/core";
+import { alpha, Flex, Select, Text, useMantineTheme } from "@mantine/core";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, ChevronDown, Check, Copy, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { fetchNui } from "../utils/fetchNui";
+import { useSettings } from "../utils/useSettings";
 
 type MissingItem = {
   name: string;
@@ -29,9 +30,10 @@ type MissingItem = {
   description?: string;
 };
 
+// Snippets are keyed by inventory (ox_inventory, qb-inventory, …, esx).
 type AuditPayload = {
   missing: MissingItem[];
-  snippets: { ox: string; qb: string; esx: string };
+  snippets: Record<string, string>;
 };
 
 type AuditResponse = {
@@ -40,12 +42,20 @@ type AuditResponse = {
   data?: AuditPayload;
 };
 
-type TabId = "ox" | "qb" | "esx";
-
-const TABS: { id: TabId; label: string }[] = [
-  { id: "ox", label: "ox_inventory" },
-  { id: "qb", label: "qb-inventory" },
-  { id: "esx", label: "ESX legacy SQL" },
+// Display order + labels for the format dropdown. Keys match the dirk_lib
+// installItems registry. Only keys actually present in the audit's snippets
+// are shown, so this list can grow ahead of / behind the generator safely.
+const INVENTORY_META: { key: string; label: string }[] = [
+  { key: "ox_inventory", label: "ox_inventory" },
+  { key: "qb-inventory", label: "qb-inventory" },
+  { key: "qs-inventory", label: "qs-inventory" },
+  { key: "codem-inventory", label: "codem-inventory" },
+  { key: "tgiann-inventory", label: "tgiann-inventory" },
+  { key: "one_inventory", label: "one_inventory" },
+  { key: "ak47_inventory", label: "ak47_inventory" },
+  { key: "core_inventory", label: "core_inventory" },
+  { key: "devix-inventory", label: "devix-inventory" },
+  { key: "esx", label: "ESX (legacy SQL)" },
 ];
 
 // Module-level audit store. Persists across component re-mounts (ConfigPanel
@@ -68,7 +78,7 @@ export const useMissingItemsAudit = create<AuditStore>((set, get) => ({
     try {
       const res = await fetchNui<AuditResponse>("GET_MISSING_ITEMS", undefined, {
         success: true,
-        data: { missing: [], snippets: { ox: "", qb: "", esx: "" } },
+        data: { missing: [], snippets: {} },
       });
       if (res?.success && res.data) {
         set({ data: res.data, loaded: true });
@@ -89,25 +99,38 @@ export function MissingItemsBanner() {
   const loaded = useMissingItemsAudit((s) => s.loaded);
   const inFlight = useMissingItemsAudit((s) => s.inFlight);
   const refresh = useMissingItemsAudit((s) => s.refresh);
+  const serverInventory = useSettings((s) => s.inventory);
   const [expanded, setExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabId>("ox");
-  const [hoveredTab, setHoveredTab] = useState<TabId | null>(null);
-  const [copied, setCopied] = useState<TabId | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  // First fetch — only when not yet loaded. Re-mount across tab switches
-  // re-fires this useEffect but the `loaded` guard blocks the second hit.
+  // First fetch — only when not yet loaded.
   useEffect(() => {
     if (!loaded) refresh();
   }, [loaded, refresh]);
 
-  const handleCopy = useCallback((tab: TabId) => {
-    if (!audit) return;
-    const text = audit.snippets[tab] ?? "";
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(tab);
-      setTimeout(() => setCopied((c) => (c === tab ? null : c)), 1500);
-    }).catch(() => {});
+  // Dropdown options = the inventories the audit returned a snippet for, in
+  // canonical order. Default to the server's own inventory when available.
+  const options = useMemo(() => {
+    const keys = audit ? Object.keys(audit.snippets) : [];
+    return INVENTORY_META.filter((m) => keys.includes(m.key)).map((m) => ({ value: m.key, label: m.label }));
   }, [audit]);
+
+  const defaultKey = useMemo(() => {
+    if (serverInventory && options.some((o) => o.value === serverInventory)) return serverInventory;
+    return options[0]?.value ?? null;
+  }, [serverInventory, options]);
+
+  const active = selected ?? defaultKey;
+
+  const handleCopy = useCallback(() => {
+    if (!audit || !active) return;
+    const text = audit.snippets[active] ?? "";
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }).catch(() => {});
+  }, [audit, active]);
 
   const handleRefresh = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -143,20 +166,13 @@ export function MissingItemsBanner() {
             {names.join(", ")}
           </Text>
         </Flex>
-        {/* Refresh button — re-runs the audit. Bounded: server callback, no
-            event listener loops. */}
         <button
           onClick={handleRefresh}
           disabled={inFlight}
           style={{
-            background: "transparent",
-            border: "none",
-            padding: "0.3vh",
-            cursor: inFlight ? "wait" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: inFlight ? 0.4 : 0.7,
+            background: "transparent", border: "none", padding: "0.3vh",
+            cursor: inFlight ? "wait" : "pointer", display: "flex",
+            alignItems: "center", justifyContent: "center", opacity: inFlight ? 0.4 : 0.7,
           }}
           title="Re-check"
         >
@@ -188,49 +204,34 @@ export function MissingItemsBanner() {
             transition={{ duration: 0.18, ease: "easeOut" }}
             style={{ overflow: "hidden", borderTop: `0.1vh solid ${alpha(warnColor, 0.18)}` }}
           >
-            {/* Tab strip — plain buttons. Framer-motion's whileHover/whileTap
-                caused two glitches we don't need: a shrink-spring on click
-                and stuck hover-tint on the previously-active tab until you
-                hover it again. CSS-driven hover state is sync'd with React
-                state cleanly. */}
-            <Flex gap="0" style={{ borderBottom: `0.1vh solid ${alpha(warnColor, 0.18)}` }}>
-              {TABS.map((tab) => {
-                const active = tab.id === activeTab;
-                const hovered = hoveredTab === tab.id;
-                let bg: string = "transparent";
-                if (active) bg = alpha(warnColor, 0.12);
-                else if (hovered) bg = alpha(warnColor, 0.08);
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={(e) => { e.stopPropagation(); setActiveTab(tab.id); }}
-                    onMouseEnter={() => setHoveredTab(tab.id)}
-                    onMouseLeave={() => setHoveredTab((h) => (h === tab.id ? null : h))}
-                    style={{
-                      flex: 1,
-                      background: bg,
-                      border: "none",
-                      borderBottom: active ? `0.2vh solid ${warnColor}` : "0.2vh solid transparent",
-                      padding: "0.3vh 1vh",
-                      cursor: active ? "default" : "pointer",
-                      color: active ? warnColor : "rgba(255,255,255,0.5)",
-                      fontFamily: "Akrobat Bold",
-                      fontSize: "var(--mantine-font-size-xxs)",
-                      letterSpacing: "0.07em",
-                      textTransform: "uppercase",
-                      transition: "background 0.12s",
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
+            {/* Inventory-format picker */}
+            <Flex align="center" gap="0.8vh" p="0.8vh 1vh" onClick={(e) => e.stopPropagation()}>
+              <Text ff="Akrobat Bold" size="xxs" tt="uppercase" lts="0.07em" c="rgba(255,255,255,0.5)" style={{ whiteSpace: "nowrap" }}>
+                Your inventory
+              </Text>
+              <Select
+                size="xs"
+                data={options}
+                value={active}
+                onChange={(v) => { setSelected(v); setCopied(false); }}
+                allowDeselect={false}
+                comboboxProps={{ withinPortal: false }}
+                style={{ flex: 1, maxWidth: "28vh" }}
+                styles={{
+                  input: {
+                    background: alpha(warnColor, 0.06),
+                    borderColor: alpha(warnColor, 0.35),
+                    color: warnColor,
+                    fontFamily: "Akrobat Bold",
+                  },
+                }}
+              />
             </Flex>
 
             <CodeView
-              code={audit.snippets[activeTab] ?? ""}
-              copied={copied === activeTab}
-              onCopy={(e) => { e.stopPropagation(); handleCopy(activeTab); }}
+              code={(active && audit.snippets[active]) || ""}
+              copied={copied}
+              onCopy={(e) => { e.stopPropagation(); handleCopy(); }}
               warnColor={warnColor}
             />
           </motion.div>
@@ -269,19 +270,11 @@ function CodeView({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          position: "absolute",
-          top: "0.6vh",
-          right: "0.8vh",
-          zIndex: 2,
+          position: "absolute", top: "0.6vh", right: "0.8vh", zIndex: 2,
           background: copyBg,
           border: `0.1vh solid ${alpha(copied ? "#22c55e" : warnColor, 0.35)}`,
-          borderRadius: theme.radius.xs,
-          padding: "0.4vh 0.7vh",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.4vh",
-          transition: "background 0.12s",
+          borderRadius: theme.radius.xs, padding: "0.4vh 0.7vh", cursor: "pointer",
+          display: "flex", alignItems: "center", gap: "0.4vh", transition: "background 0.12s",
         }}
       >
         {copied
@@ -294,29 +287,20 @@ function CodeView({
 
       <div style={{
         background: alpha(theme.colors.dark[9], 0.6),
-        maxHeight: "40vh",
-        overflowY: "auto",
-        overflowX: "auto",
-        padding: "0.6vh 0",
+        maxHeight: "40vh", overflowY: "auto", overflowX: "auto", padding: "0.6vh 0",
       }}>
         <table style={{ borderCollapse: "collapse", width: "100%", fontFamily: "monospace", fontSize: "1.2vh", lineHeight: 1.5 }}>
           <tbody>
             {lines.map((line, i) => (
               <tr key={i}>
                 <td style={{
-                  width: `${lineNumWidth + 2}ch`,
-                  textAlign: "right",
-                  padding: "0 0.8vh 0 1vh",
-                  color: "rgba(255,255,255,0.25)",
-                  userSelect: "none",
-                  whiteSpace: "nowrap",
-                  verticalAlign: "top",
+                  width: `${lineNumWidth + 2}ch`, textAlign: "right",
+                  padding: "0 0.8vh 0 1vh", color: "rgba(255,255,255,0.25)",
+                  userSelect: "none", whiteSpace: "nowrap", verticalAlign: "top",
                 }}>{i + 1}</td>
                 <td style={{
-                  padding: "0 1vh",
-                  color: "rgba(255,255,255,0.85)",
-                  whiteSpace: "pre",
-                  verticalAlign: "top",
+                  padding: "0 1vh", color: "rgba(255,255,255,0.85)",
+                  whiteSpace: "pre", verticalAlign: "top",
                 }}>{line || "​"}</td>
               </tr>
             ))}

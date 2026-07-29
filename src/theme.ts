@@ -1,4 +1,5 @@
 import { alpha, ColorInput, createTheme, MantineTheme, MultiSelect, NumberInput, TextInput } from "@mantine/core";
+import type { CSSProperties } from "react";
 
 export const label = {
   fontSize: 'var(--mantine-font-size-xs)',
@@ -20,12 +21,24 @@ export const genericInputStyles = {
     error: error,
     description: description,
     
+    // Set as Mantine's own input VARIABLES, not as plain declarations.
+    //
+    // Mantine draws the field as `border: 1px solid var(--input-bd)` and focuses it
+    // by swapping that variable: `:focus-within { --input-bd: var(--input-bd-focus) }`,
+    // where the focus colour is the theme's primary. A `styles` object is applied as
+    // INLINE style, so declaring `border` here outright beat that rule and silently
+    // removed the focus ring from every input in every dirk NUI — the look was right,
+    // but a focused field was indistinguishable from an idle one.
+    //
+    // Same resting appearance, with focus, error and disabled states left to Mantine
+    // where they follow the palette. Border width becomes Mantine's 1px rather than
+    // 0.1vh, which is the only visible difference.
     input:{
-      background: 'rgba(255,255,255,0.04)',
-      border: '0.1vh solid rgba(255,255,255,0.08)',
-      color: 'rgba(255,255,255,0.85)',
-      minHeight: '4vh',
-    },
+      '--input-bg': 'rgba(255,255,255,0.04)',
+      '--input-bd': 'rgba(255,255,255,0.08)',
+      '--input-color': 'rgba(255,255,255,0.85)',
+      '--input-height': '4vh',
+    } as CSSProperties,
   },
 };
 

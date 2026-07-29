@@ -1,4 +1,4 @@
-import { alpha, Box, Flex, JsonInput, Loader, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { alpha, Box, Flex, JsonInput, Loader, MantineThemeProvider, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { locale } from "../utils/locales";
@@ -19,6 +19,7 @@ import { useSettings } from "../utils/useSettings";
 import { dirkQueryClient } from "../providers/DirkProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { getScriptConfigInstance } from "../hooks/useScriptConfig";
+import { panelCssVars, panelTheme } from "../theme/panelTheme";
 import type {
   ScriptConfigHistoryEntry,
   ScriptConfigHistoryRequest,
@@ -496,6 +497,10 @@ function ConfigPanelInner<T extends Record<string, any>>({
         bg={alpha(theme.colors.dark[9], 0.9)}
         w={width ?? "120vh"} h={height ?? "80vh"} bdrs="sm"
         style={{
+          // Re-declare the library's own type scale and greys for this subtree.
+          // Custom properties inherit, so every Mantine `size=` inside the
+          // panel resolves against these instead of the host resource's.
+          ...panelCssVars,
           userSelect: "none", overflow: "hidden",
           transform: "translate(-50%, -50%)",
           boxShadow: "0 0 10px rgba(0,0,0,0.5)",
@@ -686,7 +691,10 @@ export function ConfigPanel<T extends Record<string, any>>(props: ConfigPanelPro
   // client (dirkQueryClient) that this component, the missing-items audit,
   // usePlayers etc. all consume. Invalidations below use the same client.
   return (
-    <>
+    // Outside FormProvider and ConfigPanelInner on purpose: the panel's own
+    // chrome calls useMantineTheme(), so it has to be inside this scope too,
+    // not just the consumer's sections.
+    <MantineThemeProvider theme={panelTheme}>
       <FormProvider<T>
         initialValues={cloneConfig(store.getState())}
         onSubmit={async (form) => {
@@ -750,6 +758,6 @@ export function ConfigPanel<T extends Record<string, any>>(props: ConfigPanelPro
           )}
         </AnimatePresence>
       </FormProvider>
-    </>
+    </MantineThemeProvider>
   );
 }

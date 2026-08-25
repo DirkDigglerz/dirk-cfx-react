@@ -47,6 +47,7 @@ type AuditResponse = {
 // are shown, so this list can grow ahead of / behind the generator safely.
 const INVENTORY_META: { key: string; label: string }[] = [
   { key: "ox_inventory", label: "ox_inventory" },
+  { key: "bp_inventory", label: "bp_inventory" },
   { key: "qb-inventory", label: "qb-inventory" },
   { key: "qs-inventory", label: "qs-inventory" },
   { key: "codem-inventory", label: "codem-inventory" },
@@ -55,6 +56,7 @@ const INVENTORY_META: { key: string; label: string }[] = [
   { key: "ak47_inventory", label: "ak47_inventory" },
   { key: "core_inventory", label: "core_inventory" },
   { key: "devix-inventory", label: "devix-inventory" },
+  { key: "dirk_inventory", label: "dirk_inventory" },
   { key: "esx", label: "ESX (legacy SQL)" },
 ];
 

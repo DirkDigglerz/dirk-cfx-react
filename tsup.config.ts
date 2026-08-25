@@ -12,6 +12,8 @@ export default defineConfig({
     "hooks/index": "src/hooks/index.tsx",
     "utils/index": "src/utils/index.ts",
     "providers/index": "src/providers/index.ts",
+    // Build-time only: imported from a vite config, not a NUI bundle.
+    "vite/index": "src/vite/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,
@@ -25,6 +27,12 @@ export default defineConfig({
   treeshake: true,
   target: "es2020",
   external: [
+    // the vite entry is build-time: it uses node builtins and vite's own types
+    "vite",
+    "node:fs",
+    "node:path",
+    "node:module",
+    "node:url",
     "react",
     "react-dom",
     "@mantine/core",
